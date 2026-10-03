@@ -1,0 +1,2205 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · App — Hoy, Nort y Tú</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    .view {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      display: none;
+      flex-direction: column;
+    }
+
+    .view.on {
+      display: flex;
+    }
+
+    .view > .screen {
+      padding: 6px 16px 24px;
+      gap: 12px;
+    }
+
+    /* ---------- Barra de pestañas ---------- */
+    .tabbar {
+      flex: none;
+      position: relative;
+      z-index: 40;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: end;
+      padding: 8px 18px 26px;
+      background: oklch(0.15 0.02 240 / 96%);
+      border-top: 1px solid var(--border);
+    }
+
+    .tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+
+    .tab.on {
+      color: var(--primary);
+    }
+
+    .tab.mid {
+      margin-top: -26px;
+    }
+
+    .mid-orb {
+      width: 58px;
+      height: 58px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: oklch(0.82 0.1 185 / 18%);
+      color: var(--primary);
+      box-shadow: 0 0 0 5px oklch(0.15 0.02 240), inset 0 0 0 1.5px oklch(0.82 0.1 185 / 50%);
+    }
+
+    .tab.mid.on .mid-orb {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    /* ---------- Pestaña Hoy ---------- */
+    .h-head .eyebrow {
+      margin-bottom: 4px;
+    }
+
+    .h-head h1 {
+      font-size: 21px;
+      line-height: 1.25;
+    }
+
+    .trip {
+      padding: 14px;
+    }
+
+    .t-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .waze {
+      width: 24px;
+      height: 24px;
+      flex: none;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #33ccff;
+      color: #0b2a3a;
+    }
+
+    .t-eta {
+      margin-left: auto;
+      text-align: right;
+      line-height: 1;
+    }
+
+    .t-eta b {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .t-eta small {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--muted-fg);
+    }
+
+    .t-track {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .t-track > svg {
+      flex: none;
+      color: var(--muted-fg);
+    }
+
+    .t-track .bar {
+      flex: 1;
+    }
+
+    .t-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted-fg);
+    }
+
+    .bento {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .bt {
+      padding: 12px;
+      border-radius: 18px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+
+    .bt svg {
+      color: var(--tone, var(--primary));
+    }
+
+    .bt .k {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    .bt .v {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .bt .s {
+      font-size: 11.5px;
+      color: var(--muted-fg);
+    }
+
+    .sec {
+      padding: 14px;
+    }
+
+    .sec-h {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sec-h .count {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    /* Escalera del día */
+    .stairs {
+      position: relative;
+      margin-top: 4px;
+      background: repeating-linear-gradient(90deg, transparent 0 calc(33.333% - 1px), oklch(1 0 0 / 8%) calc(33.333% - 1px) 33.333%);
+    }
+
+    .stairs svg.steps {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .stairs svg.steps path {
+      fill: none;
+      stroke: oklch(1 0 0 / 30%);
+      stroke-width: 1.2;
+      stroke-dasharray: 2 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .blk {
+      position: absolute;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      border: 1px solid transparent;
+    }
+
+    .lbl {
+      position: absolute;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .lbl .t {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--muted-fg);
+    }
+
+    .k-bus { background: rgb(56 189 248 / 18%); border-color: rgb(56 189 248 / 40%); color: #7dd3fc; }
+    .k-prep { background: oklch(0.82 0.1 185 / 18%); border-color: oklch(0.82 0.1 185 / 45%); color: var(--primary); }
+    .k-def { background: rgb(251 113 133 / 28%); border-color: rgb(251 113 133 / 70%); color: #fecdd3; }
+    .k-task { background: rgb(251 191 36 / 20%); border-color: rgb(251 191 36 / 55%); color: #fde68a; }
+    .k-work { background: rgb(167 139 250 / 18%); border-color: rgb(167 139 250 / 45%); color: #ddd6fe; }
+
+    .now {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      z-index: 3;
+      width: 2px;
+      border-radius: 2px;
+      background: var(--fg);
+    }
+
+    .now::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--fg);
+    }
+
+    .ticks {
+      position: relative;
+      height: 14px;
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted-fg);
+    }
+
+    .ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+
+    .ticks span:first-child {
+      transform: none;
+    }
+
+    .ticks span:last-child {
+      transform: translateX(-100%);
+    }
+
+    /* Filas de pendientes y avisos */
+    .li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .li:first-of-type {
+      border-top: 0;
+    }
+
+    .li .body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .li .meta {
+      font-size: 11.5px;
+      color: var(--muted-fg);
+    }
+
+    .chk {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1.5px oklch(1 0 0 / 30%);
+      color: transparent;
+    }
+
+    .li.done .chk {
+      background: var(--calm);
+      box-shadow: none;
+      color: oklch(0.18 0.03 240);
+    }
+
+    .li.done .title {
+      text-decoration: line-through;
+      color: var(--muted-fg);
+    }
+
+    .lvl {
+      width: 8px;
+      height: 8px;
+      flex: none;
+      border-radius: 99px;
+    }
+
+    .mini {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .li .when {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    /* ---------- Pestaña Nort: la red ---------- */
+    #v-nort {
+      overflow: hidden;
+      background: radial-gradient(360px 300px at 50% 45%, oklch(0.3 0.06 190 / 35%), transparent 70%), var(--bg);
+    }
+
+    .brain-wrap {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, oklch(1 0 0 / 9%) 1px, transparent 1.3px);
+      background-size: 22px 22px;
+      touch-action: none;
+    }
+
+    #brain {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      user-select: none;
+    }
+
+    #brain.panning {
+      cursor: grabbing;
+    }
+
+    #brain text {
+      font-family: var(--font);
+      pointer-events: none;
+    }
+
+    .edge {
+      stroke-linecap: round;
+      transition: opacity 0.3s, stroke 0.3s, stroke-width 0.3s;
+    }
+
+    .edge.x {
+      stroke-dasharray: 3 4;
+    }
+
+    .edge.hot {
+      stroke: var(--primary) !important;
+      stroke-width: 2.4 !important;
+      opacity: 1 !important;
+    }
+
+    .node {
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .node .ring {
+      transition: stroke-width 0.3s, r 0.3s;
+    }
+
+    .node.lit .ring {
+      stroke-width: 3;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    .node.sel .ring {
+      stroke: var(--fg);
+      stroke-width: 3;
+    }
+
+    .dim {
+      opacity: 0.16;
+    }
+
+    .far .node.l2 text,
+    .far .node.l3 text {
+      opacity: 0;
+    }
+
+    .far .node.lit text,
+    .far .node.sel text,
+    .focus .node:not(.dim) text {
+      opacity: 1;
+    }
+
+    .core-glow {
+      animation: breathe 3s ease-in-out infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    @keyframes breathe {
+      50% {
+        transform: scale(1.18);
+        opacity: 0.5;
+      }
+    }
+
+    .think {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 8px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .think .phrase {
+      margin-top: 6px;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      min-height: 44px;
+      transition: opacity 0.35s, transform 0.35s;
+    }
+
+    .think .phrase.out {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    .dots {
+      display: inline-flex;
+      gap: 3px;
+    }
+
+    .dots i {
+      width: 4px;
+      height: 4px;
+      border-radius: 99px;
+      background: var(--primary);
+      animation: blink 1.2s infinite;
+    }
+
+    .dots i:nth-child(2) { animation-delay: 0.2s; }
+    .dots i:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    .zoomer {
+      position: absolute;
+      right: 12px;
+      top: 104px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .zoomer button {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: oklch(0.22 0.02 240 / 85%);
+      border: 1px solid var(--border);
+      color: var(--muted-fg);
+    }
+
+    .acts {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .acts.hide {
+      opacity: 0;
+      transform: translateY(12px);
+      pointer-events: none;
+    }
+
+    .acts button {
+      height: 52px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      background: oklch(0.22 0.02 240 / 90%);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .acts .call-btn {
+      background: var(--primary);
+      color: var(--primary-fg);
+      border: 0;
+    }
+
+    .hint-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 76px;
+      z-index: 5;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--muted-fg);
+      pointer-events: none;
+    }
+
+    /* Hoja de un nodo */
+    .nsheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 8;
+      padding: 10px 18px 18px;
+      border-radius: 24px 24px 0 0;
+      background: oklch(0.21 0.02 240 / 96%);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      transform: translateY(105%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .nsheet.on {
+      transform: none;
+    }
+
+    .crumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+      font-size: 11.5px;
+      color: var(--muted-fg);
+    }
+
+    .crumbs button {
+      color: var(--muted-fg);
+      font-size: 11.5px;
+    }
+
+    .crumbs button:hover {
+      color: var(--fg);
+    }
+
+    .ns-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .ns-dot {
+      width: 34px;
+      height: 34px;
+      flex: none;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+    }
+
+    .ns-head h3 {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .ns-head .x {
+      margin-left: auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: oklch(1 0 0 / 6%);
+      color: var(--muted-fg);
+    }
+
+    .ns-lines {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13.5px;
+      line-height: 1.4;
+      opacity: 0.9;
+    }
+
+    .ns-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .ns-links button {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 7%);
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .ns-links i {
+      width: 7px;
+      height: 7px;
+      border-radius: 99px;
+    }
+
+    .ns-ask {
+      margin-top: 12px;
+      width: 100%;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: oklch(0.82 0.1 185 / 14%);
+      color: var(--primary);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+
+    /* Modo llamada */
+    .call {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 20px 20px;
+      background: linear-gradient(oklch(0.13 0.02 240 / 70%), oklch(0.13 0.02 240 / 92%) 55%);
+      backdrop-filter: blur(2px);
+    }
+
+    .call.on {
+      display: flex;
+    }
+
+    .calling .think,
+    .calling .zoomer,
+    .calling .hint-nav {
+      opacity: 0 !important;
+    }
+
+    .c-orb {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      margin-top: 34px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .c-orb span {
+      position: absolute;
+      inset: 0;
+      border-radius: 99px;
+      border: 2px solid var(--primary);
+      animation: ring 2.4s ease-out infinite;
+    }
+
+    .c-orb span:nth-child(2) {
+      animation-delay: 1.2s;
+    }
+
+    .c-orb.talk span {
+      animation-duration: 1.1s;
+    }
+
+    @keyframes ring {
+      from {
+        transform: scale(1);
+        opacity: 0.7;
+      }
+      to {
+        transform: scale(1.7);
+        opacity: 0;
+      }
+    }
+
+    .c-name {
+      margin-top: 18px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .c-time {
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    .c-caps {
+      flex: 1;
+      width: 100%;
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .cc {
+      font-size: 15px;
+      line-height: 1.4;
+      animation: capIn 0.3s ease-out;
+    }
+
+    .cc.nort {
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .cc.john {
+      align-self: flex-end;
+      max-width: 85%;
+      padding: 7px 12px;
+      border-radius: 14px 4px 14px 14px;
+      background: oklch(1 0 0 / 8%);
+      color: var(--muted-fg);
+      font-size: 14px;
+    }
+
+    .cc.old {
+      opacity: 0.4;
+    }
+
+    @keyframes capIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+
+    .c-note {
+      margin-top: 12px;
+      font-size: 11.5px;
+      color: var(--muted-fg);
+    }
+
+    .c-ctrl {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: 100%;
+      margin-top: 14px;
+    }
+
+    .c-ctrl button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    .c-ctrl .b {
+      width: 56px;
+      height: 56px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: oklch(1 0 0 / 10%);
+      color: var(--fg);
+    }
+
+    .c-ctrl .on .b {
+      background: var(--fg);
+      color: var(--bg);
+    }
+
+    .c-ctrl .end .b {
+      background: #ef4444;
+    }
+
+    /* Chat */
+    .chat {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      top: 100px;
+      z-index: 22;
+      display: flex;
+      flex-direction: column;
+      border-radius: 24px 24px 0 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      transform: translateY(105%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .chat.on {
+      transform: none;
+    }
+
+    .ch-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 10px;
+      font-weight: 600;
+    }
+
+    .ch-head .logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .ch-head .x {
+      margin-left: auto;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: oklch(1 0 0 / 6%);
+      color: var(--muted-fg);
+    }
+
+    .msgs {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 16px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      scrollbar-width: none;
+    }
+
+    .m {
+      max-width: 82%;
+      padding: 9px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      animation: capIn 0.25s ease-out;
+    }
+
+    .m.nort {
+      align-self: flex-start;
+      background: oklch(1 0 0 / 7%);
+      border-radius: 4px 16px 16px 16px;
+    }
+
+    .m.me {
+      align-self: flex-end;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border-radius: 16px 4px 16px 16px;
+    }
+
+    .m.typing {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .sugg {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .sugg button {
+      flex: none;
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 6%);
+      border: 1px solid var(--border);
+      font-size: 12.5px;
+    }
+
+    .ch-input {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 12px 12px;
+      padding: 5px 5px 5px 14px;
+      border-radius: 18px;
+      background: oklch(1 0 0 / 6%);
+      border: 1px solid var(--border);
+    }
+
+    .ch-input input {
+      flex: 1;
+      min-width: 0;
+      height: 36px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--fg);
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .ch-input input::placeholder {
+      color: var(--muted-fg);
+    }
+
+    .ch-input button {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+    }
+
+    .ch-input .mic {
+      color: var(--primary);
+      background: oklch(0.82 0.1 185 / 14%);
+    }
+
+    .ch-input .send {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    /* ---------- Pestaña Tú ---------- */
+    .me-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: oklch(0.82 0.1 185 / 18%);
+      color: var(--primary);
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .me-head h1 {
+      font-size: 20px;
+    }
+
+    .grp {
+      padding: 4px 14px;
+    }
+
+    .grp-t {
+      margin: 6px 4px -4px;
+    }
+
+    .opt {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .opt:first-child {
+      border-top: 0;
+    }
+
+    .opt .body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .opt .meta {
+      font-size: 11.5px;
+      color: var(--muted-fg);
+    }
+
+    .opt > svg {
+      color: var(--muted-fg);
+      flex: none;
+    }
+
+    .switch {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      flex: none;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 14%);
+      transition: background 0.2s;
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 99px;
+      background: var(--fg);
+      transition: transform 0.2s;
+    }
+
+    .switch.on {
+      background: var(--primary);
+    }
+
+    .switch.on::after {
+      transform: translateX(18px);
+      background: var(--primary-fg);
+    }
+
+    .connect {
+      height: 30px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: oklch(0.82 0.1 185 / 14%);
+      color: var(--primary);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .seg {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      gap: 3px;
+      padding: 3px;
+      margin-top: 8px;
+      border-radius: 12px;
+      background: oklch(1 0 0 / 6%);
+    }
+
+    .seg button {
+      height: 32px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+
+    .seg button.on {
+      background: var(--card-2);
+      color: var(--fg);
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+
+    .opt.col {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+    }
+
+    .range {
+      width: 100%;
+      margin-top: 10px;
+      accent-color: var(--primary);
+    }
+
+    .mem {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 0 12px;
+    }
+
+    .mem span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 30px;
+      padding: 0 6px 0 12px;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 6%);
+      font-size: 12.5px;
+    }
+
+    .mem button {
+      width: 20px;
+      height: 20px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      color: var(--muted-fg);
+    }
+
+    .sheet h3 {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .field {
+      display: block;
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+
+    .field input {
+      display: block;
+      width: 100%;
+      height: 42px;
+      margin-top: 6px;
+      padding: 0 12px;
+      border-radius: 12px;
+      border: 1px solid var(--input);
+      outline: 0;
+      background: oklch(1 0 0 / 4%);
+      color: var(--fg);
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .field input:focus {
+      border-color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone" id="phone">
+      <div class="statusbar" data-time="11:20"></div>
+
+      <!-- ================= HOY ================= -->
+      <section class="view on" id="v-hoy">
+        <main class="screen">
+          <header class="h-head">
+            <p class="eyebrow">Viernes 9 · en camino</p>
+            <h1>Vas bien: llegas <span class="hl">12:30</span> y tu defensa es a la 1:30.</h1>
+          </header>
+
+          <section class="card trip">
+            <div class="t-row">
+              <span class="waze"><svg class="i" width="15" height="15"><use href="#i-waze"/></svg></span>
+              <div>
+                <p>Bus Lumaca</p>
+                <p class="xs muted" style="font-weight: 500">La Lima → Laboratorio</p>
+              </div>
+              <div class="t-eta"><small>llegas</small><b>12:30</b></div>
+            </div>
+            <div class="t-track">
+              <svg class="i" width="15" height="15"><use href="#i-home"/></svg>
+              <div class="bar"><span style="width: 22%"></span><i style="left: 22%"></i></div>
+              <svg class="i" width="15" height="15"><use href="#i-pin"/></svg>
+            </div>
+            <p class="t-status"><span class="dot"></span>Tráfico normal en Taras · según Waze<span class="chip calm" style="margin-left: auto; height: 22px">a tiempo</span></p>
+          </section>
+
+          <div class="bento">
+            <div class="bt" style="--tone: var(--act)"><svg class="i" width="18" height="18"><use href="#i-presentation"/></svg><p class="k">Próximo</p><p class="v">Defensa 1:30</p><p class="s">Laboratorio</p></div>
+            <div class="bt" style="--tone: var(--watch)"><svg class="i" width="18" height="18"><use href="#i-clock"/></svg><p class="k">Margen</p><p class="v">10 min</p><p class="s">antes de la defensa</p></div>
+            <div class="bt" style="--tone: var(--primary)"><svg class="i" width="18" height="18"><use href="#i-circle-check"/></svg><p class="k">Pendientes</p><p class="v" id="pend-count">2</p><p class="s">1 antes de la defensa</p></div>
+            <div class="bt" style="--tone: var(--occupied)"><svg class="i" width="18" height="18"><use href="#i-bell"/></svg><p class="k">Avisos</p><p class="v">4</p><p class="s">1 importante</p></div>
+          </div>
+
+          <section class="card sec">
+            <div class="sec-h"><p class="eyebrow">Flujo del día</p><span class="count">11 a 5</span></div>
+            <div class="stairs" id="stairs"><svg class="steps" id="steps" preserveAspectRatio="none"><path id="steps-path" /></svg><div class="now" id="now"></div></div>
+            <div class="ticks"><span style="left: 0">11</span><span style="left: 33.333%">1</span><span style="left: 66.666%">3</span><span style="left: 100%">5</span></div>
+          </section>
+
+          <section class="card sec">
+            <div class="sec-h"><p class="eyebrow">Pendientes</p></div>
+            <div id="pend"></div>
+          </section>
+
+          <section class="card sec">
+            <div class="sec-h"><p class="eyebrow">Notificaciones</p></div>
+            <div id="notifs"></div>
+          </section>
+        </main>
+      </section>
+
+      <!-- ================= NORT ================= -->
+      <section class="view" id="v-nort">
+        <div class="brain-wrap" id="wrap">
+          <svg id="brain"><g id="world"><g id="edges"></g><g id="pulses"></g><g id="nodes"></g></g></svg>
+        </div>
+
+        <div class="think">
+          <p class="eyebrow"><span class="dots"><i></i><i></i><i></i></span>Nort está pensando</p>
+          <p class="phrase" id="phrase"></p>
+        </div>
+
+        <div class="zoomer">
+          <button id="z-in" aria-label="Acercar"><svg class="i" width="16" height="16"><use href="#i-plus"/></svg></button>
+          <button id="z-out" aria-label="Alejar"><svg class="i" width="16" height="16"><use href="#i-minus"/></svg></button>
+          <button id="z-fit" aria-label="Ver toda la red"><svg class="i" width="16" height="16"><use href="#i-maximize"/></svg></button>
+        </div>
+
+        <p class="hint-nav" id="hint-nav">Arrastra, acerca y toca un nodo para explorar</p>
+
+        <div class="acts" id="acts">
+          <button class="call-btn" id="open-call"><svg class="i" width="18" height="18"><use href="#i-phone"/></svg>Llamar a Nort</button>
+          <button id="open-chat"><svg class="i" width="18" height="18"><use href="#i-message"/></svg>Chatear</button>
+        </div>
+
+        <div class="nsheet" id="nsheet">
+          <div class="crumbs" id="crumbs"></div>
+          <div class="ns-head">
+            <span class="ns-dot" id="ns-dot"></span>
+            <div>
+              <h3 id="ns-title"></h3>
+              <p class="xs muted" id="ns-sub"></p>
+            </div>
+            <button class="x" id="ns-close" aria-label="Cerrar"><svg class="i" width="16" height="16"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="ns-lines" id="ns-lines"></div>
+          <div class="ns-links" id="ns-links"></div>
+          <button class="ns-ask" id="ns-ask"><svg class="i" width="16" height="16"><use href="#i-mic"/></svg>Preguntarle a Nort sobre esto</button>
+        </div>
+
+        <div class="call" id="call">
+          <p class="eyebrow">Modo llamada</p>
+          <div class="c-orb" id="c-orb"><span></span><span></span><svg class="i" width="44" height="44"><use href="#i-nort"/></svg></div>
+          <p class="c-name">Nort</p>
+          <p class="c-time mono" id="c-time">00:00</p>
+          <div class="c-caps" id="c-caps"></div>
+          <p class="c-note">Puedes bloquear la pantalla: la llamada sigue en tus audífonos.</p>
+          <div class="c-ctrl">
+            <button id="c-mute"><span class="b"><svg class="i" width="22" height="22"><use href="#i-mic-off"/></svg></span>Silenciar</button>
+            <button id="c-voice"><span class="b"><svg class="i" width="22" height="22"><use href="#i-volume"/></svg></span>Oír voz</button>
+            <button id="c-chat"><span class="b"><svg class="i" width="22" height="22"><use href="#i-message"/></svg></span>Chat</button>
+            <button class="end" id="c-end"><span class="b"><svg class="i" width="22" height="22"><use href="#i-phone-off"/></svg></span>Colgar</button>
+          </div>
+        </div>
+
+        <div class="chat" id="chat">
+          <div class="ch-head">
+            <span class="logo"><svg class="i" width="14" height="14"><use href="#i-nort"/></svg></span>Chat con Nort
+            <button class="x" id="ch-close" aria-label="Cerrar chat"><svg class="i" width="16" height="16"><use href="#i-chevron-down"/></svg></button>
+          </div>
+          <div class="msgs" id="msgs"></div>
+          <div class="sugg" id="sugg"></div>
+          <form class="ch-input" id="ch-form">
+            <input id="ch-in" placeholder="Escríbele a Nort…" autocomplete="off" />
+            <button type="button" class="mic" id="ch-mic" aria-label="Pasar a llamada"><svg class="i" width="17" height="17"><use href="#i-mic"/></svg></button>
+            <button class="send" aria-label="Enviar"><svg class="i" width="16" height="16"><use href="#i-send"/></svg></button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= TÚ ================= -->
+      <section class="view" id="v-tu">
+        <main class="screen">
+          <header class="me-head">
+            <span class="avatar">JS</span>
+            <div>
+              <h1>John Smith</h1>
+              <p class="xs muted">john.smith@techsolutions.com</p>
+              <p class="xs muted">Ingeniero de software · TechSolutions · híbrido</p>
+            </div>
+          </header>
+
+          <p class="eyebrow grp-t">Conexiones</p>
+          <section class="card grp" id="conns"></section>
+
+          <p class="eyebrow grp-t">Personaliza a Nort</p>
+          <section class="card grp">
+            <div class="opt col">
+              <p>Voz</p>
+              <div class="seg"><button class="on">Cálida</button><button>Neutra</button><button>Enérgica</button></div>
+            </div>
+            <div class="opt col">
+              <p>Cómo te habla</p>
+              <div class="seg"><button class="on">Tú</button><button>Usted</button><button>Vos</button></div>
+            </div>
+            <div class="opt col">
+              <p>Largo de las respuestas</p>
+              <div class="seg"><button class="on">Breve</button><button>Normal</button><button>Con detalle</button></div>
+            </div>
+            <div class="opt col">
+              <p>Cuándo te habla primero</p>
+              <div class="seg"><button>Solo urgente</button><button class="on">Equilibrado</button><button>Todo</button></div>
+            </div>
+            <div class="opt col">
+              <div style="display: flex; justify-content: space-between"><p>Velocidad de la voz</p><span class="xs muted mono" id="speed-v">1.0×</span></div>
+              <input type="range" class="range" min="0.8" max="1.4" step="0.1" value="1" id="speed" />
+            </div>
+            <div class="opt"><div class="body"><p>Reconocer cómo te sientes</p><p class="meta">“No depende de ti”, “Fue una mañana movida”</p></div><button class="switch on" aria-label="Reconocer cómo te sientes"></button></div>
+          </section>
+
+          <p class="eyebrow grp-t">Cómo lo llamas</p>
+          <section class="card grp">
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-headphones"/></svg><div class="body"><p>Botón de los audífonos</p><p class="meta">Doble toque para hablar</p></div><button class="switch on" aria-label="Botón de los audífonos"></button></div>
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-mic"/></svg><div class="body"><p>“Oye Nort”</p><p class="meta">Escucha siempre · usa más batería</p></div><button class="switch" aria-label="Oye Nort"></button></div>
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-volume"/></svg><div class="body"><p>No hablar sin audífonos</p><p class="meta">En público, Nort responde en pantalla</p></div><button class="switch on" aria-label="No hablar sin audífonos"></button></div>
+          </section>
+
+          <p class="eyebrow grp-t">Rutina y lugares</p>
+          <section class="card grp">
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-home"/></svg><div class="body"><p>Casa</p><p class="meta">La Lima, Cartago</p></div><svg class="i" width="16" height="16"><use href="#i-chevron-right"/></svg></div>
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-briefcase"/></svg><div class="body"><p>Trabajo</p><p class="meta">TechSolutions, San José · 8:00 a 5:00</p></div><svg class="i" width="16" height="16"><use href="#i-chevron-right"/></svg></div>
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-bus"/></svg><div class="body"><p>Trayecto</p><p class="meta">Bus Lumaca · cerca de 1 h 30</p></div><svg class="i" width="16" height="16"><use href="#i-chevron-right"/></svg></div>
+            <div class="opt"><svg class="i" width="18" height="18"><use href="#i-clock"/></svg><div class="body"><p>Preparación antes de algo importante</p><p class="meta">30 minutos</p></div><svg class="i" width="16" height="16"><use href="#i-chevron-right"/></svg></div>
+          </section>
+
+          <p class="eyebrow grp-t">No molestar</p>
+          <section class="card grp">
+            <div class="opt"><div class="body"><p>En clases y reuniones</p><p class="meta">Solo lo urgente, al terminar</p></div><button class="switch on" aria-label="En clases y reuniones"></button></div>
+            <div class="opt"><div class="body"><p>En el bus, solo lo importante</p><p class="meta">Lo demás, al llegar</p></div><button class="switch on" aria-label="En el bus"></button></div>
+            <div class="opt"><div class="body"><p>Noche</p><p class="meta">10:00 p. m. a 6:00 a. m.</p></div><button class="switch on" aria-label="Noche"></button></div>
+          </section>
+
+          <p class="eyebrow grp-t">Lo que Nort sabe de ti</p>
+          <section class="card grp">
+            <div class="mem" id="mem"></div>
+          </section>
+
+          <p class="xs muted" style="text-align: center; padding: 4px 0 8px">Mockup: ninguna conexión es real.</p>
+        </main>
+      </section>
+
+      <nav class="tabbar" id="tabbar">
+        <button class="tab on" data-v="hoy"><svg class="i" width="22" height="22"><use href="#i-route"/></svg>Hoy</button>
+        <button class="tab mid" data-v="nort"><span class="mid-orb"><svg class="i" width="26" height="26"><use href="#i-nort"/></svg></span>Nort</button>
+        <button class="tab" data-v="tu"><svg class="i" width="22" height="22"><use href="#i-user"/></svg>Tú</button>
+      </nav>
+
+      <div class="sheet-backdrop" id="backdrop"></div>
+      <form class="sheet" id="api-sheet">
+        <div class="grabber"></div>
+        <h3>Conectar una API</h3>
+        <p class="xs muted" style="margin-top: 4px">Para servicios que no están en la lista. Nort solo lee lo que le permitas.</p>
+        <label class="field">Nombre<input id="api-name" placeholder="Ej. Moodle de la universidad" /></label>
+        <label class="field">URL base<input placeholder="https://api.ejemplo.com" /></label>
+        <label class="field">Clave de acceso<input type="password" placeholder="••••••••••••" /></label>
+        <button class="btn btn-primary btn-block" style="margin-top: 16px">Conectar</button>
+      </form>
+
+      <div class="toast" id="toast"><svg class="i" width="18" height="18"><use href="#i-circle-check"/></svg><span id="toast-text"></span></div>
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="icons.js"></script>
+  <script>
+    const icon = (id, s = 14) => `<svg class="i" width="${s}" height="${s}"><use href="#i-${id}"/></svg>`;
+    const $ = (s) => document.querySelector(s);
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const mins = (hm) => {
+      const [h, m] = hm.split(":").map(Number);
+      return h * 60 + m;
+    };
+
+    const toast = $("#toast");
+    function showToast(text) {
+      $("#toast-text").textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.t);
+      showToast.t = setTimeout(() => toast.classList.remove("show"), 1900);
+    }
+
+    // =================================================================
+    // Pestañas
+    // =================================================================
+    let fitted = false;
+    function openTab(v) {
+      document.querySelectorAll(".view").forEach((n) => n.classList.toggle("on", n.id === "v-" + v));
+      document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.v === v));
+      if (v === "nort" && !fitted) {
+        fitted = true;
+        fit(false);
+      }
+    }
+    document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => openTab(t.dataset.v)));
+
+    // =================================================================
+    // HOY: escalera del día, pendientes y avisos
+    // =================================================================
+    const FLOW = [
+      { s: "11:00", e: "12:30", k: "bus", icon: "bus", name: "Bus", t: "llegas 12:30" },
+      { s: "12:30", e: "13:00", k: "prep", icon: "check", name: "Preparar", t: "12:30" },
+      { s: "13:00", e: "13:20", k: "prep", icon: "table", name: "Revisión", t: "1:00" },
+      { s: "13:30", e: "14:30", k: "def", icon: "presentation", name: "Defensa", t: "1:30" },
+      { s: "14:45", e: "15:15", k: "task", icon: "send", name: "Avance", t: "2:45" },
+      { s: "15:30", e: "17:00", k: "work", icon: "briefcase", name: "Desarrollo", t: "3:30" },
+    ];
+    const D0 = mins("11:00");
+    const DSPAN = mins("17:00") - D0;
+    const pct = (hm) => ((mins(hm) - D0) / DSPAN) * 100;
+    const ROW = 22;
+    const GAP = 7;
+
+    function renderStairs() {
+      const st = $("#stairs");
+      const H = FLOW.length * ROW + (FLOW.length - 1) * GAP;
+      st.style.height = H + "px";
+      $("#steps").setAttribute("viewBox", `0 0 100 ${H}`);
+      const minPct = (26 / st.clientWidth) * 100;
+      const steps = FLOW.map((b, i) => {
+        const w = Math.max(pct(b.e) - pct(b.s), minPct);
+        return { b, x: Math.min(pct(b.s), 100 - w), w, top: i * (ROW + GAP) };
+      });
+      steps.forEach(({ b, x, w, top }) => {
+        const el = document.createElement("div");
+        el.className = `blk k-${b.k}`;
+        Object.assign(el.style, { top: top + "px", height: ROW + "px", left: x + "%", width: w + "%" });
+        el.innerHTML = icon(b.icon, 12);
+        st.appendChild(el);
+        const lbl = document.createElement("div");
+        lbl.className = "lbl";
+        Object.assign(lbl.style, { top: top + "px", height: ROW + "px", left: `calc(${x + w}% + 6px)` });
+        lbl.innerHTML = `${b.name}<span class="t">${b.t}</span>`;
+        st.appendChild(lbl);
+        if (lbl.offsetLeft + lbl.offsetWidth > st.clientWidth) {
+          lbl.style.left = "auto";
+          lbl.style.right = `calc(${100 - x}% + 6px)`;
+        }
+      });
+      let d = "";
+      for (let i = 0; i < steps.length - 1; i++) {
+        const a = steps[i];
+        const n = steps[i + 1];
+        d += `M${a.x + a.w} ${a.top + ROW}V${a.top + ROW + GAP / 2}H${n.x}V${n.top}`;
+      }
+      $("#steps-path").setAttribute("d", d);
+      $("#now").style.left = pct("11:20") + "%";
+    }
+    renderStairs();
+
+    const PEND = [
+      { title: "Revisar Minitab", meta: "15 min · antes de 1:25", chip: '<span class="chip watch">Al llegar</span>' },
+      { title: "Avance semanal", meta: "30 min · antes de 4:00", chip: '<span class="chip">2:45</span>' },
+      { title: "Ensayar la presentación", meta: "Hecho a las 10:00", done: true },
+    ];
+    function renderPend() {
+      $("#pend").innerHTML = PEND.map(
+        (p, i) => `<div class="li${p.done ? " done" : ""}" data-i="${i}">
+          <button class="chk" aria-label="Marcar ${p.title}">${icon("check", 13)}</button>
+          <div class="body"><p class="title">${p.title}</p><p class="meta">${p.meta}</p></div>${p.done ? "" : p.chip}</div>`,
+      ).join("");
+      $("#pend-count").textContent = PEND.filter((p) => !p.done).length;
+    }
+    renderPend();
+    $("#pend").addEventListener("click", (e) => {
+      const row = e.target.closest(".li");
+      if (!row || !e.target.closest(".chk")) return;
+      const p = PEND[row.dataset.i];
+      p.done = !p.done;
+      if (p.done) p.meta = "Hecho ahora";
+      renderPend();
+      showToast(p.done ? "Hecho. Nort ya lo sabe." : "Vuelve a pendientes");
+    });
+
+    const SRC = {
+      gmail: { color: "#ea4335", icon: "mail" },
+      cal: { color: "#1a73e8", text: "31" },
+      waze: { color: "#33ccff", icon: "waze", fg: "#0b2a3a" },
+      nort: { color: "oklch(0.82 0.1 185)", icon: "nort", fg: "oklch(0.18 0.03 240)" },
+    };
+    const mini = (k) => {
+      const s = SRC[k];
+      return `<span class="mini" style="background:${s.color};color:${s.fg || "#fff"}">${s.text || icon(s.icon, 12)}</span>`;
+    };
+    const LVL = { imp: "#fb7185", util: "#fbbf24", wait: "oklch(1 0 0 / 30%)" };
+    const NOTIFS = [
+      { lvl: "imp", src: "gmail", title: "La defensa se adelantó a la 1:30", meta: "Ya reacomodé tu preparación", when: "10:15" },
+      { lvl: "util", src: "cal", title: "Cliente: propusiste el lunes a las 9", meta: "Esperando respuesta", when: "8:30" },
+      { lvl: "util", src: "waze", title: "Tráfico normal en tu ruta", meta: "Te aviso si cambia", when: "11:18" },
+      { lvl: "wait", src: "nort", title: "3 correos informativos", meta: "Los ves al llegar", when: "—" },
+    ];
+    $("#notifs").innerHTML = NOTIFS.map(
+      (n) => `<div class="li"><span class="lvl" style="background:${LVL[n.lvl]}"></span>${mini(n.src)}
+        <div class="body"><p>${n.title}</p><p class="meta">${n.meta}</p></div><span class="when">${n.when}</span></div>`,
+    ).join("");
+
+    // =================================================================
+    // NORT: la red de lo que Nort sabe
+    // =================================================================
+    const CATS = {
+      agenda: { label: "Agenda", color: "#a78bfa", icon: "calendar" },
+      pend: { label: "Pendientes", color: "#fbbf24", icon: "circle-check" },
+      viaje: { label: "Viaje", color: "#38bdf8", icon: "bus" },
+      proy: { label: "Proyectos", color: "#fb7185", icon: "folder" },
+      pers: { label: "Personas", color: "#34d399", icon: "users" },
+      fuentes: { label: "Fuentes", color: "#94a3b8", icon: "link" },
+      pref: { label: "Preferencias", color: "#2dd4bf", icon: "settings" },
+    };
+
+    const N = [
+      { id: "core", label: "Nort", sub: "Lo que sé de tu día", lines: ["Cruzo tu calendario, correo, Drive y Waze para responderte en dos frases."] },
+      ...Object.entries(CATS).map(([id, c]) => ({ id, parent: "core", cat: id, label: c.label })),
+      { id: "def", parent: "agenda", label: "Defensa 1:30", sub: "Laboratorio · 1:30 a 2:30", lines: ["Se adelantó desde las 2:00 (correo de investigación).", "Preparación y revisión ya están bloqueadas."] },
+      { id: "standup", parent: "agenda", label: "Stand-up", sub: "8:00 · hecho" },
+      { id: "dev", parent: "agenda", label: "Desarrollo", sub: "3:30 a 5:00", lines: ["Lo moviste desde las 9:00 para hacer la presentación."] },
+      { id: "cli-ev", parent: "agenda", label: "Reunión cliente", sub: "Propuesta: lunes 9:00", lines: ["Se cruzaba con tu viaje. Esperando respuesta."] },
+      { id: "mt-task", parent: "pend", label: "Revisar Minitab", sub: "15 min · antes de 1:25", lines: ["Es lo único que falta antes de la defensa."] },
+      { id: "avance", parent: "pend", label: "Avance semanal", sub: "30 min · antes de 4:00", lines: ["Reservado de 2:45 a 3:15."] },
+      { id: "ensayo", parent: "pend", label: "Ensayar", sub: "Hecho a las 10:00" },
+      { id: "bus", parent: "viaje", label: "Bus Lumaca", sub: "Salida 11:00", lines: ["La Lima → Laboratorio, cerca de 1 h 30."] },
+      { id: "llegada", parent: "viaje", label: "Llegada 12:30", sub: "10 min de margen", lines: ["Si el bus se atrasa, comprimo la preparación, nunca la defensa."] },
+      { id: "trafico", parent: "viaje", label: "Tráfico", sub: "Normal en Taras", lines: ["Según Waze, sin incidentes en tu ruta."] },
+      { id: "proj", parent: "proy", label: "Defensa de investigación", sub: "3 archivos · /Defensa_Final" },
+      { id: "f-inf", parent: "proj", label: "Informe", sub: "Listo · editado el jueves" },
+      { id: "f-mt", parent: "proj", label: "Minitab", sub: "Por revisar" },
+      { id: "f-ppt", parent: "proj", label: "Presentación", sub: "Revisada hoy 9:50" },
+      { id: "jefe", parent: "pers", label: "Jefe", sub: "Espera el avance semanal" },
+      { id: "inv", parent: "pers", label: "Investigación", sub: "Organiza la defensa" },
+      { id: "cli", parent: "pers", label: "Cliente", sub: "Le propusiste el lunes 9:00" },
+      { id: "s-cal", parent: "fuentes", label: "Calendar", sub: "Leer y escribir" },
+      { id: "s-gmail", parent: "fuentes", label: "Gmail", sub: "Solo lectura" },
+      { id: "s-drive", parent: "fuentes", label: "Drive", sub: "Carpeta Defensa_Final" },
+      { id: "s-waze", parent: "fuentes", label: "Waze", sub: "Tráfico de tu ruta" },
+      { id: "p-prep", parent: "pref", label: "Preparar 30 min", sub: "Antes de algo importante" },
+      { id: "p-quiet", parent: "pref", label: "Silencio en reuniones", sub: "Solo lo urgente" },
+      { id: "p-short", parent: "pref", label: "Respuestas cortas", sub: "Dos frases" },
+    ];
+    const X = [
+      ["def", "proj"], ["def", "llegada"], ["def", "inv"], ["mt-task", "f-mt"], ["avance", "jefe"],
+      ["cli-ev", "cli"], ["s-gmail", "def"], ["s-waze", "trafico"], ["trafico", "llegada"],
+      ["s-drive", "proj"], ["s-cal", "def"], ["p-prep", "def"], ["ensayo", "f-ppt"],
+    ];
+
+    const byId = Object.fromEntries(N.map((n) => [n.id, n]));
+    N.forEach((n) => {
+      n.children = N.filter((c) => c.parent === n.id).map((c) => c.id);
+      n.level = n.id === "core" ? 0 : byId[n.parent].id === "core" ? 1 : byId[byId[n.parent].parent]?.id === "core" ? 2 : 3;
+      let c = n;
+      while (c && !c.cat) c = byId[c.parent];
+      n.cat = c ? c.cat : null;
+      n.color = n.cat ? CATS[n.cat].color : "oklch(0.82 0.1 185)";
+    });
+
+    // Disposición radial
+    const R1 = 108, R2 = 205, R3 = 292;
+    const EX = 0.9, EY = 1.1;
+    const at = (a, r) => ({ a, x: Math.cos(a) * r * EX, y: Math.sin(a) * r * EY });
+    const cats = Object.keys(CATS);
+    cats.forEach((id, i) => {
+      const a = -Math.PI / 2 + (i * 2 * Math.PI) / cats.length;
+      Object.assign(byId[id], at(a, R1));
+      const kids = byId[id].children;
+      const step = Math.min(0.36, (2 * Math.PI) / cats.length / Math.max(kids.length, 1));
+      kids.forEach((k, j) => {
+        const ka = a + (j - (kids.length - 1) / 2) * step;
+        Object.assign(byId[k], at(ka, R2 + (j % 2) * 26));
+        byId[k].children.forEach((g, m, arr) => {
+          Object.assign(byId[g], at(ka + (m - (arr.length - 1) / 2) * 0.22, R3));
+        });
+      });
+    });
+    Object.assign(byId.core, { x: 0, y: 0 });
+
+    const NS = "http://www.w3.org/2000/svg";
+    const S = (tag, attrs, parent) => {
+      const e = document.createElementNS(NS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    };
+    const $edges = $("#edges");
+    const $nodes = $("#nodes");
+    const $pulses = $("#pulses");
+    const EDGE = {};
+    const key = (a, b) => [a, b].sort().join("|");
+
+    N.forEach((n) => {
+      if (!n.parent) return;
+      const p = byId[n.parent];
+      EDGE[key(n.id, p.id)] = S("line", { class: "edge", x1: p.x, y1: p.y, x2: n.x, y2: n.y, stroke: n.color, "stroke-width": n.level === 1 ? 2 : 1.3, opacity: n.level === 1 ? 0.55 : 0.35 }, $edges);
+    });
+    X.forEach(([a, b]) => {
+      EDGE[key(a, b)] = S("line", { class: "edge x", x1: byId[a].x, y1: byId[a].y, x2: byId[b].x, y2: byId[b].y, stroke: "#ffffff", "stroke-width": 1, opacity: 0.18 }, $edges);
+    });
+
+    const NODE_EL = {};
+    N.forEach((n) => {
+      const g = S("g", { class: `node l${n.level}`, "data-id": n.id, transform: `translate(${n.x} ${n.y})`, style: `color:${n.color}` }, $nodes);
+      if (n.level === 0) {
+        S("circle", { class: "core-glow", r: 44, fill: "oklch(0.82 0.1 185 / 18%)" }, g);
+        S("circle", { class: "ring", r: 30, fill: "oklch(0.82 0.1 185)", stroke: "oklch(0.82 0.1 185 / 40%)", "stroke-width": 6 }, g);
+        S("use", { href: "#i-nort", x: -14, y: -14, width: 28, height: 28, style: "color:oklch(0.18 0.03 240)" }, g);
+      } else if (n.level === 1) {
+        S("circle", { class: "ring", r: 21, fill: "oklch(0.2 0.02 240)", stroke: n.color, "stroke-width": 2 }, g);
+        S("use", { href: "#i-" + CATS[n.id].icon, x: -9, y: -9, width: 18, height: 18 }, g);
+        S("text", { y: 36, "text-anchor": "middle", fill: "#f5f3ee", "font-size": 13, "font-weight": 600 }, g).textContent = n.label;
+      } else {
+        const r = n.level === 2 ? 9 : 7;
+        S("circle", { class: "ring", r, fill: "oklch(0.2 0.02 240)", stroke: n.color, "stroke-width": 2 }, g);
+        S("circle", { r: r - 4, fill: n.color }, g);
+        S("text", { y: r + 14, "text-anchor": "middle", fill: "#cfd6df", "font-size": 11.5, "font-weight": 500 }, g).textContent = n.label;
+      }
+      NODE_EL[n.id] = g;
+    });
+
+    // Vecinos (árbol + asociaciones)
+    const NEI = Object.fromEntries(N.map((n) => [n.id, new Set()]));
+    N.forEach((n) => {
+      if (n.parent) {
+        NEI[n.id].add(n.parent);
+        NEI[n.parent].add(n.id);
+      }
+    });
+    X.forEach(([a, b]) => {
+      NEI[a].add(b);
+      NEI[b].add(a);
+    });
+
+    // ---------- Vista: mover y acercar ----------
+    const svg = $("#brain");
+    const world = $("#world");
+    const wrap = $("#wrap");
+    let view = { x: 0, y: 0, k: 1 };
+    const apply = () => {
+      world.setAttribute("transform", `translate(${view.x} ${view.y}) scale(${view.k})`);
+      wrap.style.backgroundPosition = `${view.x}px ${view.y}px`;
+      wrap.style.backgroundSize = `${22 * view.k}px ${22 * view.k}px`;
+      world.classList.toggle("far", view.k < 0.85);
+    };
+    let tweenId = 0;
+    function tween(to, ms = 420) {
+      const from = { ...view };
+      const id = ++tweenId;
+      const t0 = performance.now();
+      const step = (now) => {
+        if (id !== tweenId) return;
+        const t = Math.min(1, (now - t0) / ms);
+        const e = 1 - Math.pow(1 - t, 3);
+        view = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, k: from.k + (to.k - from.k) * e };
+        apply();
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+    function fit(animate = true) {
+      const W = wrap.clientWidth;
+      const H = wrap.clientHeight;
+      const xs = N.map((n) => n.x);
+      const ys = N.map((n) => n.y);
+      const b = { x1: Math.min(...xs) - 34, x2: Math.max(...xs) + 34, y1: Math.min(...ys) - 20, y2: Math.max(...ys) + 30 };
+      const top = 84;
+      const bottom = 84;
+      const k = Math.min((W - 16) / (b.x2 - b.x1), (H - top - bottom) / (b.y2 - b.y1), 1.2);
+      const to = { k, x: W / 2 - ((b.x1 + b.x2) / 2) * k, y: top + (H - top - bottom) / 2 - ((b.y1 + b.y2) / 2) * k };
+      if (animate) tween(to);
+      else {
+        view = to;
+        apply();
+      }
+    }
+    function zoomAt(f, sx, sy) {
+      tweenId++;
+      const k = Math.max(0.3, Math.min(2.6, view.k * f));
+      const r = k / view.k;
+      view = { x: sx - (sx - view.x) * r, y: sy - (sy - view.y) * r, k };
+      apply();
+    }
+    const center = () => [wrap.clientWidth / 2, wrap.clientHeight / 2];
+    $("#z-in").onclick = () => zoomAt(1.3, ...center());
+    $("#z-out").onclick = () => zoomAt(1 / 1.3, ...center());
+    $("#z-fit").onclick = () => {
+      deselect();
+      fit();
+    };
+
+    const ptrs = new Map();
+    let pan = null;
+    let pinch = null;
+    svg.addEventListener("pointerdown", (e) => {
+      svg.setPointerCapture(e.pointerId);
+      ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (ptrs.size === 1) pan = { sx: e.clientX, sy: e.clientY, moved: false, target: e.target.closest("[data-id]") };
+      else if (ptrs.size === 2) {
+        const [a, b] = [...ptrs.values()];
+        pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), k: view.k };
+        if (pan) pan.moved = true;
+      }
+    });
+    svg.addEventListener("pointermove", (e) => {
+      const p = ptrs.get(e.pointerId);
+      if (!p || !pan) return;
+      const dx = e.clientX - p.x;
+      const dy = e.clientY - p.y;
+      p.x = e.clientX;
+      p.y = e.clientY;
+      if (ptrs.size === 2 && pinch) {
+        const [a, b] = [...ptrs.values()];
+        const r = wrap.getBoundingClientRect();
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        zoomAt((pinch.k * (d / pinch.d)) / view.k, (a.x + b.x) / 2 - r.left, (a.y + b.y) / 2 - r.top);
+        return;
+      }
+      if (!pan.moved && Math.hypot(e.clientX - pan.sx, e.clientY - pan.sy) > 6) {
+        pan.moved = true;
+        svg.classList.add("panning");
+      }
+      if (pan.moved) {
+        tweenId++;
+        view.x += dx;
+        view.y += dy;
+        apply();
+      }
+    });
+    const endPtr = (e) => {
+      if (!ptrs.has(e.pointerId)) return;
+      ptrs.delete(e.pointerId);
+      if (ptrs.size) return;
+      svg.classList.remove("panning");
+      if (pan && !pan.moved) {
+        if (pan.target) select(pan.target.dataset.id);
+        else deselect();
+      }
+      pan = null;
+      pinch = null;
+    };
+    svg.addEventListener("pointerup", endPtr);
+    svg.addEventListener("pointercancel", endPtr);
+    svg.addEventListener(
+      "wheel",
+      (e) => {
+        e.preventDefault();
+        const r = wrap.getBoundingClientRect();
+        zoomAt(Math.exp(-e.deltaY * 0.0018), e.clientX - r.left, e.clientY - r.top);
+      },
+      { passive: false },
+    );
+
+    // ---------- Pensar: caminos encendidos y pulsos ----------
+    function pathPoints(path) {
+      return path.map((id) => byId[id]);
+    }
+    function pulse(path, { color = "oklch(0.88 0.12 185)", r = 4, seg = 340, faint = false } = {}) {
+      const pts = pathPoints(path);
+      if (pts.length < 2) return;
+      const c = S("circle", { r, fill: color, opacity: faint ? 0.45 : 1 }, $pulses);
+      if (!faint) c.setAttribute("style", "filter:drop-shadow(0 0 6px " + color + ")");
+      const t0 = performance.now();
+      const total = seg * (pts.length - 1);
+      const step = (now) => {
+        const t = Math.min(1, (now - t0) / total);
+        const f = t * (pts.length - 1);
+        const i = Math.min(pts.length - 2, Math.floor(f));
+        const u = f - i;
+        c.setAttribute("cx", pts[i].x + (pts[i + 1].x - pts[i].x) * u);
+        c.setAttribute("cy", pts[i].y + (pts[i + 1].y - pts[i].y) * u);
+        if (t < 1) requestAnimationFrame(step);
+        else c.remove();
+      };
+      requestAnimationFrame(step);
+    }
+    let hot = [];
+    function light(paths) {
+      hot.forEach((el) => el.classList.remove("hot", "lit"));
+      hot = [];
+      paths.forEach((path) => {
+        path.forEach((id, i) => {
+          NODE_EL[id].classList.add("lit");
+          hot.push(NODE_EL[id]);
+          if (i) {
+            const e = EDGE[key(path[i - 1], id)];
+            if (e) {
+              e.classList.add("hot");
+              hot.push(e);
+            }
+          }
+        });
+        pulse(path);
+      });
+    }
+    setInterval(() => {
+      const keys = Object.keys(EDGE);
+      const [a, b] = keys[Math.floor(Math.random() * keys.length)].split("|");
+      pulse(Math.random() < 0.5 ? [a, b] : [b, a], { r: 2.2, seg: 900, faint: true });
+    }, 450);
+
+    // Frases según el contexto (viernes 11:20, en el bus)
+    const THOUGHTS = [
+      { t: "Vas en el bus. Llegas a las 12:30.", paths: [["core", "viaje", "llegada"]] },
+      { t: "Tu defensa es a la 1:30: te quedan 10 minutos de margen.", paths: [["core", "agenda", "def"], ["llegada", "def"]] },
+      { t: "Minitab sigue pendiente: 15 minutos al llegar.", paths: [["core", "pend", "mt-task", "f-mt"]] },
+      { t: "Waze no reporta atrasos en tu ruta.", paths: [["core", "fuentes", "s-waze", "trafico", "llegada"]] },
+      { t: "El cliente todavía no responde lo del lunes.", paths: [["core", "pers", "cli", "cli-ev"]] },
+      { t: "Tu jefe espera el avance antes de las 4.", paths: [["core", "pers", "jefe", "avance"]] },
+    ];
+    let thought = 0;
+    let busy = false;
+    const $phrase = $("#phrase");
+    async function say(text, paths) {
+      $phrase.classList.add("out");
+      await wait(300);
+      $phrase.textContent = text;
+      $phrase.classList.remove("out");
+      light(paths);
+    }
+    function nextThought() {
+      if (busy) return;
+      const th = THOUGHTS[thought++ % THOUGHTS.length];
+      say(th.t, th.paths);
+    }
+    nextThought();
+    setInterval(nextThought, 4500);
+
+    // ---------- Navegar: seleccionar un nodo ----------
+    let selected = null;
+    const chain = (id) => {
+      const out = [];
+      let c = byId[id];
+      while (c) {
+        out.unshift(c.id);
+        c = byId[c.parent];
+      }
+      return out;
+    };
+    function select(id) {
+      const n = byId[id];
+      selected = id;
+      busy = true;
+      const keep = new Set([id, ...NEI[id]]);
+      Object.entries(NODE_EL).forEach(([nid, el]) => {
+        el.classList.toggle("dim", !keep.has(nid));
+        el.classList.toggle("sel", nid === id);
+      });
+      Object.entries(EDGE).forEach(([k, el]) => {
+        const [a, b] = k.split("|");
+        el.classList.toggle("dim", !(a === id || b === id));
+      });
+      light([chain(id)]);
+      $phrase.textContent = n.sub || n.label;
+
+      $("#crumbs").innerHTML = chain(id)
+        .map((c, i, arr) => (i < arr.length - 1 ? `<button data-go="${c}">${byId[c].label}</button>${icon("chevron-right", 11)}` : `<span style="color:var(--fg)">${byId[c].label}</span>`))
+        .join("");
+      const dot = $("#ns-dot");
+      dot.style.background = n.level === 0 ? "var(--primary)" : n.color + "33";
+      dot.style.color = n.level === 0 ? "var(--primary-fg)" : n.color;
+      dot.innerHTML = icon(n.level === 0 ? "nort" : n.level === 1 ? CATS[n.id].icon : "sparkles", 17);
+      $("#ns-title").textContent = n.label;
+      $("#ns-sub").textContent = n.sub || `${n.children.length} conexiones`;
+      $("#ns-lines").innerHTML = (n.lines || []).map((l) => `<p>${l}</p>`).join("");
+      $("#ns-links").innerHTML = [...NEI[id]]
+        .map((nid) => `<button data-go="${nid}"><i style="background:${byId[nid].color}"></i>${byId[nid].label}</button>`)
+        .join("");
+      $("#nsheet").classList.add("on");
+      $("#acts").classList.add("hide");
+      $("#hint-nav").style.opacity = 0;
+      world.classList.add("focus");
+
+      const W = wrap.clientWidth;
+      const H = wrap.clientHeight;
+      const top = 96;
+      const bottom = H - $("#nsheet").offsetHeight - 16;
+      const pts = [id, ...NEI[id]].map((nid) => byId[nid]);
+      const x1 = Math.min(...pts.map((p) => p.x)) - 40;
+      const x2 = Math.max(...pts.map((p) => p.x)) + 40;
+      const y1 = Math.min(...pts.map((p) => p.y)) - 24;
+      const y2 = Math.max(...pts.map((p) => p.y)) + 30;
+      const k = Math.max(0.9, Math.min(1.5, W / (x2 - x1), (bottom - top) / (y2 - y1)));
+      const cx = n.x * 0.65 + ((x1 + x2) / 2) * 0.35;
+      const cy = n.y * 0.65 + ((y1 + y2) / 2) * 0.35;
+      tween({ k, x: W / 2 - cx * k, y: (top + bottom) / 2 - cy * k });
+    }
+    function deselect() {
+      if (!selected) return;
+      selected = null;
+      busy = false;
+      document.querySelectorAll("#brain .dim, #brain .sel").forEach((el) => el.classList.remove("dim", "sel"));
+      world.classList.remove("focus");
+      $("#nsheet").classList.remove("on");
+      $("#acts").classList.remove("hide");
+      $("#hint-nav").style.opacity = 1;
+      nextThought();
+    }
+    $("#nsheet").addEventListener("click", (e) => {
+      const go = e.target.closest("[data-go]");
+      if (go) select(go.dataset.go);
+    });
+    $("#ns-close").onclick = () => {
+      deselect();
+      fit();
+    };
+    $("#ns-ask").onclick = () => {
+      const n = byId[selected];
+      openChat(`¿Qué hay con ${n.label.toLowerCase()}?`);
+    };
+
+    // ---------- Modo llamada ----------
+    const CALL = [
+      ["nort", "Hola, John. Vas en el bus y llegas a las 12:30.", [["core", "viaje", "llegada"]]],
+      ["john", "¿Qué tengo cuando llegue?"],
+      ["nort", "Preparas tu equipo y a la 1:30 tu defensa. Te falta revisar Minitab: son 15 minutos.", [["core", "agenda", "def"], ["core", "pend", "mt-task", "f-mt"]]],
+      ["john", "¿Y si el bus se atrasa?"],
+      ["nort", "Te aviso apenas Waze lo vea y reacomodo la preparación. La defensa no se mueve.", [["core", "fuentes", "s-waze", "trafico", "llegada", "def"]]],
+      ["john", "Perfecto, gracias."],
+      ["nort", "De nada. Descansa; te aviso antes de tu parada.", [["core", "viaje", "bus"]]],
+    ];
+    let callRun = 0;
+    let callStart = 0;
+    let callTimer = null;
+    let voiceOn = false;
+    const $call = $("#call");
+    const $caps = $("#c-caps");
+
+    function speak(text) {
+      return new Promise((resolve) => {
+        if (!("speechSynthesis" in window)) return resolve();
+        const u = new SpeechSynthesisUtterance(text);
+        const v = speechSynthesis.getVoices().find((x) => x.lang.startsWith("es"));
+        if (v) u.voice = v;
+        u.lang = v ? v.lang : "es-ES";
+        u.rate = Number($("#speed").value) || 1;
+        u.onend = u.onerror = resolve;
+        speechSynthesis.speak(u);
+        setTimeout(resolve, 2500 + text.length * 90);
+      });
+    }
+
+    async function startCall() {
+      deselect();
+      closeChat();
+      const my = ++callRun;
+      busy = true;
+      $call.classList.add("on");
+      $("#v-nort").classList.add("calling");
+      $("#acts").classList.add("hide");
+      $caps.innerHTML = "";
+      callStart = Date.now();
+      clearInterval(callTimer);
+      callTimer = setInterval(() => {
+        const s = Math.floor((Date.now() - callStart) / 1000);
+        $("#c-time").textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+      }, 500);
+      await wait(700);
+      for (const [who, text, paths] of CALL) {
+        if (my !== callRun) return;
+        [...$caps.children].forEach((c) => c.classList.add("old"));
+        while ($caps.children.length > 2) $caps.firstChild.remove();
+        const el = document.createElement("p");
+        el.className = "cc " + who;
+        el.textContent = text;
+        $caps.appendChild(el);
+        if (who === "nort") {
+          $("#c-orb").classList.add("talk");
+          if (paths) light(paths);
+          if (voiceOn) await speak(text);
+          else await wait(900 + text.length * 30);
+          $("#c-orb").classList.remove("talk");
+        } else {
+          await wait(700 + text.length * 30);
+        }
+        await wait(350);
+      }
+    }
+    function endCall(silent) {
+      callRun++;
+      clearInterval(callTimer);
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      if ($call.classList.contains("on") && !silent) showToast(`Llamada terminada · ${$("#c-time").textContent}`);
+      $call.classList.remove("on");
+      $("#v-nort").classList.remove("calling");
+      $("#acts").classList.remove("hide");
+      busy = false;
+    }
+    $("#open-call").onclick = startCall;
+    $("#c-end").onclick = () => endCall();
+    $("#c-mute").onclick = (e) => e.currentTarget.classList.toggle("on");
+    $("#c-voice").onclick = (e) => {
+      voiceOn = !voiceOn;
+      e.currentTarget.classList.toggle("on", voiceOn);
+      if (!voiceOn && "speechSynthesis" in window) speechSynthesis.cancel();
+    };
+    $("#c-chat").onclick = () => {
+      endCall(true);
+      openChat();
+    };
+
+    // ---------- Chat ----------
+    const $msgs = $("#msgs");
+    const SUGG = ["¿Qué tengo hoy?", "¿Cuánto margen tengo?", "¿Qué me falta de la defensa?", "Recuérdame comprar leche al salir"];
+    $("#sugg").innerHTML = SUGG.map((s) => `<button type="button">${s}</button>`).join("");
+
+    function msg(who, text) {
+      const el = document.createElement("div");
+      el.className = "m " + who;
+      el.textContent = text;
+      $msgs.appendChild(el);
+      $msgs.scrollTop = $msgs.scrollHeight;
+      return el;
+    }
+    msg("nort", "Hola, John. Vas camino al laboratorio. ¿En qué te ayudo?");
+
+    function reply(q) {
+      const s = q.toLowerCase();
+      if (/margen|libre|tiempo|llego|llegar/.test(s)) return ["Llegas a las 12:30: te quedan 10 minutos de margen antes de la defensa.", [["core", "viaje", "llegada", "def"]]];
+      if (/minitab|falta|defensa|archivo/.test(s)) return ["Te falta revisar Minitab: 15 minutos. El informe y la presentación ya están listos.", [["core", "proy", "proj", "f-mt"], ["core", "pend", "mt-task"]]];
+      if (/recu[eé]rd|av[ií]same/.test(s)) return ["Listo. Te lo recuerdo cuando salgas del laboratorio.", [["core", "pend"]]];
+      if (/jefe|avance/.test(s)) return ["Tu jefe espera el avance antes de las 4. Lo tienes reservado de 2:45 a 3:15.", [["core", "pers", "jefe", "avance"]]];
+      if (/cliente/.test(s)) return ["Le propusiste el lunes a las 9 y todavía no responde. Te aviso cuando lo haga.", [["core", "pers", "cli", "cli-ev"]]];
+      if (/hoy|tengo|agenda/.test(s)) return ["Tu defensa es a la 1:30. Antes, preparar y revisar Minitab; después, el avance semanal a las 2:45.", [["core", "agenda", "def"], ["core", "pend", "avance"]]];
+      return ["No lo encontré en tu calendario, tu correo ni tu Drive. ¿Me das un poco más de contexto?", [["core", "fuentes"]]];
+    }
+    async function ask(q) {
+      if (!q.trim()) return;
+      msg("me", q);
+      const typing = msg("nort", "");
+      typing.classList.add("typing");
+      typing.innerHTML = '<span class="dots"><i></i><i></i><i></i></span>';
+      const [text, paths] = reply(q);
+      busy = true;
+      light(paths);
+      await wait(800);
+      typing.classList.remove("typing");
+      typing.textContent = text;
+      $phrase.textContent = text;
+      busy = false;
+    }
+    function openChat(prefill) {
+      $("#chat").classList.add("on");
+      $("#acts").classList.add("hide");
+      if (prefill) ask(prefill);
+    }
+    function closeChat() {
+      $("#chat").classList.remove("on");
+      if (!selected) $("#acts").classList.remove("hide");
+    }
+    $("#open-chat").onclick = () => openChat();
+    $("#ch-close").onclick = closeChat;
+    $("#ch-mic").onclick = startCall;
+    $("#sugg").addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (b) ask(b.textContent);
+    });
+    $("#ch-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = $("#ch-in");
+      ask(input.value);
+      input.value = "";
+    });
+
+    // =================================================================
+    // TÚ: conexiones, personalización y memoria
+    // =================================================================
+    const CONNS = [
+      { name: "Google Calendar", meta: "Leer y escribir eventos", color: "#1a73e8", text: "31", on: true },
+      { name: "Gmail", meta: "Solo lectura · fechas y cambios", color: "#ea4335", icon: "mail", on: true },
+      { name: "Google Drive", meta: "Carpeta /Defensa_Final", color: "#1e8e3e", icon: "folder", on: true },
+      { name: "Waze", meta: "Tráfico de tu ruta", color: "#33ccff", fg: "#0b2a3a", icon: "waze", on: true },
+      { name: "Outlook", meta: "Correo y calendario de Microsoft", color: "#0f6cbd", icon: "mail" },
+      { name: "Microsoft Teams", meta: "Reuniones", color: "#5b5fc7", icon: "video" },
+      { name: "Notion", meta: "Notas y tareas", color: "#f1f1ef", fg: "#111", text: "N" },
+    ];
+    function renderConns() {
+      $("#conns").innerHTML =
+        CONNS.map(
+          (c, i) => `<div class="opt"><span class="mini" style="width:32px;height:32px;border-radius:10px;background:${c.color};color:${c.fg || "#fff"};font-size:12px">${c.text || icon(c.icon, 16)}</span>
+            <div class="body"><p>${c.name}</p><p class="meta">${c.on ? c.meta : "No conectado"}</p></div>
+            ${c.on ? `<button class="switch on" data-c="${i}" aria-label="${c.name}"></button>` : `<button class="connect" data-c="${i}">Conectar</button>`}</div>`,
+        ).join("") +
+        `<div class="opt"><span class="mini" style="width:32px;height:32px;border-radius:10px;background:oklch(1 0 0 / 8%);color:var(--primary)">${icon("key", 16)}</span>
+          <div class="body"><p>Otra API</p><p class="meta">Moodle, un sistema interno, lo que necesites</p></div><button class="connect" id="add-api">Agregar</button></div>`;
+    }
+    renderConns();
+    $("#conns").addEventListener("click", (e) => {
+      if (e.target.closest("#add-api")) {
+        $("#phone").classList.add("sheet-open");
+        return;
+      }
+      const b = e.target.closest("[data-c]");
+      if (!b) return;
+      const c = CONNS[b.dataset.c];
+      c.on = !c.on;
+      renderConns();
+      showToast(c.on ? `${c.name} conectado` : `${c.name} desconectado`);
+    });
+    $("#backdrop").onclick = () => $("#phone").classList.remove("sheet-open");
+    $("#api-sheet").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = $("#api-name").value.trim() || "API personalizada";
+      CONNS.push({ name, meta: "API personalizada", color: "#334155", icon: "key", on: true });
+      renderConns();
+      $("#phone").classList.remove("sheet-open");
+      e.target.reset();
+      showToast(`${name} conectada`);
+    });
+
+    document.querySelectorAll("#v-tu .seg").forEach((seg) =>
+      seg.addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        seg.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x === b));
+        showToast("Nort ya lo tiene en cuenta");
+      }),
+    );
+    document.querySelectorAll("#v-tu .switch").forEach((sw) =>
+      sw.addEventListener("click", () => {
+        if (sw.dataset.c) return;
+        sw.classList.toggle("on");
+      }),
+    );
+    $("#speed").addEventListener("input", (e) => ($("#speed-v").textContent = Number(e.target.value).toFixed(1) + "×"));
+
+    const MEM = ["Prefieres respuestas cortas", "Sales en bus a las 11", "Te preparas 30 min antes", "No te gusta que te hablen en reuniones", "Juan es tu compañero de equipo"];
+    function renderMem() {
+      $("#mem").innerHTML =
+        MEM.map((m, i) => `<span>${m}<button data-m="${i}" aria-label="Olvidar">${icon("x", 12)}</button></span>`).join("") ||
+        '<p class="xs muted">Nort no recuerda nada todavía.</p>';
+    }
+    renderMem();
+    $("#mem").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-m]");
+      if (!b) return;
+      const [m] = MEM.splice(b.dataset.m, 1);
+      renderMem();
+      showToast(`Olvidado: ${m.toLowerCase()}`);
+    });
+
+    if ("speechSynthesis" in window) speechSynthesis.getVoices();
+    const start = new URLSearchParams(location.search).get("tab");
+    if (start) openTab(start);
+  </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · Opción 3 — Llegada</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    .action {
+      flex: none;
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      background: oklch(0.82 0.1 185 / 12%);
+    }
+
+    .action.done {
+      color: var(--calm);
+      background: rgb(52 211 153 / 12%);
+    }
+
+    .time {
+      flex: none;
+      width: 40px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    .screen {
+      padding-bottom: 110px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      padding: 28px 20px 30px;
+      background: linear-gradient(transparent, var(--bg) 35%);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar" data-time="7:49"></div>
+
+      <main class="screen">
+        <header class="row-between" style="align-items: flex-start; padding-top: 4px">
+          <div>
+            <h1>¡Buenos días, John!</h1>
+            <p class="small muted" style="margin-top: 2px">Martes 6 de octubre</p>
+          </div>
+          <span class="chip"><svg class="i" width="14" height="14" style="color: var(--primary)"><use href="#i-cloud-sun"/></svg>18° · nublado</span>
+        </header>
+
+        <section class="card hero tone-watch">
+          <span class="edge"></span>
+          <div class="row-between">
+            <span class="pill"><svg class="i" width="14" height="14"><use href="#i-pin"/></svg>Llegada <span class="mono muted" style="letter-spacing: 0; font-weight: 400">7:48</span></span>
+            <span class="status"><span class="dot"></span>Atención</span>
+          </div>
+          <h2 style="margin-top: 16px; font-size: 22px">Llegaste 18 min tarde, pero la stand-up aún te espera. Lo que no puede esperar es el <span class="hl">Reporte semanal</span>.</h2>
+          <p class="small muted" style="margin-top: 10px">Soltaste 4 cosas en el bus. Ya las ordenamos: 3 son para hoy y 1 se puede mover.</p>
+        </section>
+
+        <section class="card">
+          <p class="eyebrow"><svg class="i" width="14" height="14" style="color: var(--act)"><use href="#i-alert"/></svg>Lo urgente · 3</p>
+          <div class="rows" style="margin-top: 4px">
+            <div class="item">
+              <span class="time">8:30</span>
+              <div class="body"><p class="title">Stand-up del equipo</p><p class="meta">En 41 min · sala 3</p></div>
+            </div>
+            <div class="item">
+              <span class="time">10:00</span>
+              <div class="body"><p class="title">Reunión con cliente</p><p class="meta">Revisar notas antes</p></div>
+            </div>
+            <div class="item">
+              <span class="time">12:00</span>
+              <div class="body"><p class="title" style="color: var(--primary)">Reporte semanal</p><p class="meta">Lo soltaste a las 6:41 · vence hoy</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <p class="eyebrow"><svg class="i" width="14" height="14"><use href="#i-move"/></svg>Se puede mover</p>
+          <div class="rows" style="margin-top: 4px">
+            <div class="item">
+              <div class="body">
+                <p class="title">1:1 con Ana</p>
+                <p class="meta"><span style="color: #fcd34d">Se solapa</span> con Sprint review · 14:00</p>
+              </div>
+              <button class="action" onclick="this.textContent='Movido ✓';this.classList.add('done')">Mover a 16:00</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <p class="eyebrow"><svg class="i" width="14" height="14"><use href="#i-history"/></svg>Quedó de ayer</p>
+          <div class="rows" style="margin-top: 4px">
+            <div class="item">
+              <div class="body"><p class="title">Pagar el recibo de luz</p><p class="meta">Personal · 2 días rodando</p></div>
+              <button class="action" onclick="this.textContent='Hecho ✓';this.classList.add('done')">Hecho</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+      <div class="footer">
+        <button class="btn btn-primary btn-block">Listo, empiezo mi día<svg class="i" width="18" height="18"><use href="#i-chevron-right"/></svg></button>
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="icons.js"></script>
+</body>
+</html>

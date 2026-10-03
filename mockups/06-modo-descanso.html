@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · Opción 6 — Modo descanso</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    .calm-orb {
+      position: relative;
+      width: 190px;
+      height: 190px;
+      margin: 8px auto 4px;
+      display: grid;
+      place-items: center;
+    }
+
+    .calm-orb span {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      border: 1px solid rgb(52 211 153 / 25%);
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    .calm-orb span:nth-child(2) {
+      inset: 22px;
+      border-color: rgb(52 211 153 / 35%);
+      animation-delay: 0.4s;
+    }
+
+    .calm-orb span:nth-child(3) {
+      inset: 44px;
+      background: radial-gradient(circle, rgb(52 211 153 / 22%), rgb(52 211 153 / 4%));
+      border-color: rgb(52 211 153 / 45%);
+      animation-delay: 0.8s;
+    }
+
+    .calm-orb svg {
+      position: relative;
+      color: #6ee7b7;
+    }
+
+    @keyframes breathe {
+      0%,
+      100% {
+        transform: scale(0.92);
+        opacity: 0.7;
+      }
+      50% {
+        transform: scale(1.04);
+        opacity: 1;
+      }
+    }
+
+    .breath-label {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #6ee7b7;
+      font-weight: 600;
+    }
+
+    .setting {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .setting:first-of-type {
+      border-top: 0;
+    }
+
+    .setting .body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 30px;
+      flex: none;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 15%);
+      transition: background 0.2s;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      border-radius: 99px;
+      background: #fff;
+      transition: transform 0.2s;
+    }
+
+    .toggle.on {
+      background: var(--calm);
+    }
+
+    .toggle.on::after {
+      transform: translateX(20px);
+    }
+
+    .tip {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px dashed oklch(1 0 0 / 15%);
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    .tip svg {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone">
+      <div class="statusbar" data-time="7:05"></div>
+
+      <main class="screen">
+        <div class="appbar">
+          <div class="brand"><svg class="i" width="18" height="18"><use href="#i-nort"/></svg>Nort</div>
+          <span class="mono xs muted">llegas <span style="color: var(--fg)">7:48</span></span>
+        </div>
+
+        <section class="card hero tone-calm">
+          <span class="edge"></span>
+          <div class="row-between">
+            <span class="pill"><svg class="i" width="14" height="14"><use href="#i-moon"/></svg>Descanso</span>
+            <span class="status"><span class="dot"></span>En calma</span>
+          </div>
+          <h2 style="margin-top: 14px; font-size: 22px">Todo está en orden. <span style="color: #6ee7b7">Puedes descansar</span> el resto del viaje.</h2>
+          <p class="small muted" style="margin-top: 8px">Nada urgente antes de las 10:00. Tus 3 pendientes de hoy ya tienen su espacio.</p>
+        </section>
+
+        <div class="calm-orb" aria-hidden="true">
+          <span></span><span></span><span></span>
+          <svg class="i" width="34" height="34"><use href="#i-moon"/></svg>
+        </div>
+        <p class="breath-label" id="breath">Inhala</p>
+
+        <section class="card" style="padding: 4px 16px">
+          <div class="setting">
+            <div class="glyph calm"><svg class="i" width="16" height="16"><use href="#i-bell"/></svg></div>
+            <div class="body"><p class="small" style="font-weight: 500">Avísame antes de mi parada</p><p class="xs muted">5 min antes · San José, Av. 2</p></div>
+            <button class="toggle on" aria-label="Avisar antes de la parada"></button>
+          </div>
+          <div class="setting">
+            <div class="glyph"><svg class="i" width="16" height="16"><use href="#i-bell-off"/></svg></div>
+            <div class="body"><p class="small" style="font-weight: 500">Silenciar trabajo hasta llegar</p><p class="xs muted">Solo pasa lo realmente urgente</p></div>
+            <button class="toggle on" aria-label="Silenciar trabajo"></button>
+          </div>
+        </section>
+
+        <div class="tip">
+          <svg class="i" width="20" height="20"><use href="#i-tap"/></svg>
+          <span>¿Te vino algo a la mente? <strong style="color: var(--fg); font-weight: 500">Toca dos veces</strong> la pantalla y queda guardado.</span>
+        </div>
+      </main>
+
+      <div class="toast" id="toast"><svg class="i" width="18" height="18"><use href="#i-circle-check"/></svg>Guardado. Sigue descansando.</div>
+      <div class="home-indicator"></div>
+    </div>
+  </div>
+
+  <script src="icons.js"></script>
+  <script>
+    document.querySelectorAll(".toggle").forEach((t) => t.addEventListener("click", () => t.classList.toggle("on")));
+
+    const breath = document.getElementById("breath");
+    let inhale = true;
+    setInterval(() => {
+      inhale = !inhale;
+      breath.textContent = inhale ? "Inhala" : "Exhala";
+    }, 3000);
+
+    const toast = document.getElementById("toast");
+    document.querySelector(".screen").addEventListener("dblclick", () => {
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    });
+  </script>
+</body>
+</html>

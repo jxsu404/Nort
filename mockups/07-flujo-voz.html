@@ -1,0 +1,1219 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · Flujo completo por voz — la defensa de John</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    body {
+      min-height: 100%;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 260px 390px 320px;
+      gap: 32px;
+      justify-content: center;
+      align-items: start;
+      padding: 28px 16px 40px;
+    }
+
+    /* ---------- Rail de pasos ---------- */
+    .rail-steps {
+      position: sticky;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .rail-steps .brand {
+      margin-bottom: 6px;
+    }
+
+    .rail-steps h1 {
+      font-size: 17px;
+      margin-bottom: 14px;
+    }
+
+    .group {
+      margin: 12px 0 4px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+    }
+
+    .stp {
+      display: grid;
+      grid-template-columns: 62px 18px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    .stp .t {
+      font-family: var(--mono);
+      font-size: 11.5px;
+    }
+
+    .stp:hover {
+      background: oklch(1 0 0 / 4%);
+    }
+
+    .stp.on {
+      background: oklch(0.82 0.1 185 / 12%);
+      color: var(--fg);
+    }
+
+    .stp.on svg {
+      color: var(--primary);
+    }
+
+    /* ---------- Teléfono ---------- */
+    .v-screen {
+      gap: 12px;
+      padding: 4px 16px 170px;
+    }
+
+    .v-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctx {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 6%);
+      font-size: 12.5px;
+      font-weight: 500;
+    }
+
+    .ear {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--primary);
+    }
+
+    .ear.off {
+      color: var(--muted-fg);
+    }
+
+    .v-date {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .v-date .mono {
+      color: var(--muted-fg);
+      font-weight: 500;
+      font-size: 18px;
+      margin-left: 6px;
+    }
+
+    #card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .v-card {
+      padding: 14px;
+    }
+
+    .v-card .eyebrow {
+      margin-bottom: 10px;
+    }
+
+    /* Hero: una sola cosa grande */
+    .big-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .big-t {
+      font-family: var(--mono);
+      font-size: 44px;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .big-t s {
+      font-size: 24px;
+      color: var(--muted-fg);
+      margin-right: 6px;
+    }
+
+    .b-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .facts3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .fact {
+      padding: 10px;
+      border-radius: 14px;
+      background: oklch(1 0 0 / 6%);
+    }
+
+    .fact svg {
+      color: var(--primary);
+    }
+
+    .fact .k {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    .fact .v {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Mini línea de tiempo */
+    .mb {
+      position: relative;
+      border-radius: 10px;
+      background: repeating-linear-gradient(90deg, transparent 0 calc(var(--step) - 1px), oklch(1 0 0 / 7%) calc(var(--step) - 1px) var(--step));
+    }
+
+    .mb-b {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 24px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .mb-ticks {
+      position: relative;
+      height: 14px;
+      margin-top: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted-fg);
+    }
+
+    .mb-ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+
+    .mb-cap {
+      margin: 10px 0 6px;
+      font-size: 11px;
+      color: var(--muted-fg);
+    }
+
+    .k-bus { background: rgb(56 189 248 / 18%); border-color: rgb(56 189 248 / 40%); color: #7dd3fc; }
+    .k-meet { background: rgb(167 139 250 / 18%); border-color: rgb(167 139 250 / 40%); color: #ddd6fe; }
+    .k-work { background: oklch(1 0 0 / 9%); border-color: oklch(1 0 0 / 14%); color: var(--muted-fg); }
+    .k-prep { background: oklch(0.82 0.1 185 / 18%); border-color: oklch(0.82 0.1 185 / 45%); color: var(--primary); }
+    .k-def { background: rgb(251 113 133 / 26%); border-color: rgb(251 113 133 / 65%); color: #fecdd3; }
+    .k-margin { background: rgb(251 191 36 / 16%); border-color: rgb(251 191 36 / 50%); color: #fde68a; }
+    .k-free { background: transparent; border: 1.5px dashed oklch(0.82 0.1 185 / 60%); color: var(--primary); }
+    .k-clash {
+      background: repeating-linear-gradient(45deg, rgb(251 113 133 / 30%) 0 6px, rgb(251 113 133 / 14%) 6px 12px);
+      border-color: #fb7185;
+      color: #fecdd3;
+    }
+    .k-new { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+    /* Filas tipo lista corta */
+    .rowx {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .rowx:first-of-type {
+      border-top: 0;
+    }
+
+    .rowx .end {
+      margin-left: auto;
+    }
+
+    .rowx.dim {
+      opacity: 0.5;
+    }
+
+    .tile {
+      width: 32px;
+      height: 32px;
+      flex: none;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tile.sm {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      font-size: 10px;
+    }
+
+    .srcs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .src {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 6px;
+      border-radius: 14px;
+      background: oklch(1 0 0 / 5%);
+      font-size: 12px;
+    }
+
+    .src .ok {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      color: var(--calm);
+    }
+
+    .opts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .opts button {
+      height: 40px;
+      border-radius: 12px;
+      background: oklch(1 0 0 / 8%);
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .opts button.pick {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .countdown {
+      text-align: center;
+      padding: 20px 14px;
+    }
+
+    .countdown .big-t {
+      font-size: 64px;
+    }
+
+    .route {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .route > svg {
+      color: var(--muted-fg);
+      flex: none;
+    }
+
+    .route .bar {
+      flex: 1;
+    }
+
+    /* Subtítulos de la conversación */
+    .captions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .cap {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      animation: capIn 0.3s ease-out;
+    }
+
+    @keyframes capIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+    }
+
+    .cap .who {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      margin-top: 1px;
+    }
+
+    .cap.nort .who {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .cap.nort p {
+      font-size: 16.5px;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .cap.john {
+      flex-direction: row-reverse;
+    }
+
+    .cap.john .who {
+      background: oklch(1 0 0 / 8%);
+      color: var(--muted-fg);
+    }
+
+    .cap.john p {
+      padding: 7px 12px;
+      border-radius: 14px 4px 14px 14px;
+      background: oklch(1 0 0 / 7%);
+      font-size: 14px;
+      color: var(--muted-fg);
+    }
+
+    .cap.john.tap p {
+      font-style: italic;
+    }
+
+    /* Dock de voz */
+    .dock {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 26px 20px 30px;
+      background: linear-gradient(transparent, var(--bg) 32%);
+    }
+
+    .orb {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      background: oklch(0.82 0.1 185 / 16%);
+      color: var(--primary);
+      box-shadow: inset 0 0 0 1.5px oklch(0.82 0.1 185 / 45%);
+      transition: background 0.2s;
+    }
+
+    .orb .wave {
+      display: none;
+      gap: 4px;
+      align-items: center;
+      height: 30px;
+    }
+
+    .orb .wave i {
+      width: 4px;
+      height: 10px;
+      border-radius: 4px;
+      background: var(--primary-fg);
+      animation: wave 0.9s ease-in-out infinite;
+    }
+
+    .orb .wave i:nth-child(2) { animation-delay: 0.15s; }
+    .orb .wave i:nth-child(3) { animation-delay: 0.3s; }
+    .orb .wave i:nth-child(4) { animation-delay: 0.45s; }
+    .orb .wave i:nth-child(5) { animation-delay: 0.6s; }
+
+    @keyframes wave {
+      50% {
+        height: 28px;
+      }
+    }
+
+    .orb.speaking {
+      background: var(--primary);
+    }
+
+    .orb.speaking .wave {
+      display: flex;
+    }
+
+    .orb.speaking > svg {
+      display: none;
+    }
+
+    .orb.listening {
+      animation: pulse 1.2s ease-out infinite;
+      background: oklch(0.82 0.1 185 / 30%);
+    }
+
+    .dock-hint {
+      font-size: 12.5px;
+      color: var(--muted-fg);
+      text-align: center;
+    }
+
+    /* ---------- Notas del equipo ---------- */
+    .notes {
+      position: sticky;
+      top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .notes h2 {
+      font-size: 20px;
+    }
+
+    .n-k {
+      margin-bottom: 6px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-fg);
+    }
+
+    .n-src {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .notes ul {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 16px;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .notes .case {
+      font-size: 13px;
+      color: var(--muted-fg);
+    }
+
+    .ctrl {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ctrl button {
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 12px;
+      background: oklch(1 0 0 / 7%);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ctrl .primary {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .ctrl .on {
+      box-shadow: inset 0 0 0 1.5px var(--primary);
+      color: var(--primary);
+    }
+
+    @media (max-width: 1060px) {
+      .flow {
+        grid-template-columns: 390px;
+      }
+
+      .rail-steps,
+      .notes {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="flow">
+    <nav class="rail-steps" id="rail">
+      <div class="brand"><svg class="i" width="20" height="20"><use href="#i-nort"/></svg>Nort</div>
+      <h1>Flujo completo por voz: la defensa de John</h1>
+    </nav>
+
+    <div class="phone" id="phone">
+      <div class="statusbar" data-time="8:00"></div>
+      <main class="screen v-screen" id="screen">
+        <div class="v-top">
+          <span class="ctx" id="ctx"></span>
+          <span class="ear" id="ear"></span>
+        </div>
+        <p class="v-date" id="date"></p>
+        <div id="card"></div>
+        <div class="captions" id="captions"></div>
+      </main>
+      <div class="dock">
+        <button class="orb" id="orb" aria-label="Hablar con Nort">
+          <svg class="i" width="30" height="30"><use href="#i-mic"/></svg>
+          <span class="wave"><i></i><i></i><i></i><i></i><i></i></span>
+        </button>
+        <p class="dock-hint" id="hint"></p>
+      </div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <aside class="notes">
+      <div>
+        <p class="eyebrow" id="n-count"></p>
+        <h2 id="n-title" style="margin-top: 6px"></h2>
+      </div>
+      <div>
+        <p class="n-k">Fuentes que usa</p>
+        <div class="n-src" id="n-src"></div>
+      </div>
+      <div>
+        <p class="n-k">Decisiones de diseño</p>
+        <ul id="n-rules"></ul>
+      </div>
+      <div>
+        <p class="n-k">Caso de prueba</p>
+        <p class="case" id="n-case"></p>
+      </div>
+      <div class="ctrl">
+        <button id="prev" aria-label="Paso anterior"><svg class="i" width="16" height="16" style="transform: rotate(180deg)"><use href="#i-chevron-right"/></svg></button>
+        <button class="primary" id="play"><svg class="i" width="15" height="15"><use href="#i-history"/></svg>Repetir</button>
+        <button id="voice"><svg class="i" width="15" height="15"><use href="#i-headphones"/></svg>Escuchar a Nort</button>
+        <button id="next" aria-label="Paso siguiente"><svg class="i" width="16" height="16"><use href="#i-chevron-right"/></svg></button>
+      </div>
+      <p class="case">Usa las flechas del teclado para avanzar. “Escuchar a Nort” lee sus respuestas con la voz del navegador.</p>
+    </aside>
+  </div>
+
+  <script src="icons.js"></script>
+  <script>
+    const icon = (id, s = 14) => `<svg class="i" width="${s}" height="${s}"><use href="#i-${id}"/></svg>`;
+
+    // ---------------------------------------------------------------
+    // Utilidades de tiempo (internamente 24 h, en pantalla 12 h)
+    // ---------------------------------------------------------------
+    const mins = (hm) => {
+      const [h, m] = hm.split(":").map(Number);
+      return h * 60 + m;
+    };
+    const fmt = (hm) => {
+      const [h, m] = hm.split(":").map(Number);
+      return `${((h + 11) % 12) + 1}:${String(m).padStart(2, "0")}`;
+    };
+
+    // Fuentes conectadas
+    const SRC = {
+      cal: { name: "Calendar", color: "#1a73e8", text: "31" },
+      gmail: { name: "Gmail", color: "#ea4335", icon: "mail" },
+      drive: { name: "Drive", color: "#1e8e3e", icon: "folder" },
+      voz: { name: "Tu voz", color: "#0f766e", icon: "mic" },
+      ruta: { name: "Rutina de viaje", color: "#0369a1", icon: "bus" },
+    };
+    const tile = (k, sm) => {
+      const s = SRC[k];
+      return `<span class="tile${sm ? " sm" : ""}" style="background:${s.color}">${s.text || icon(s.icon, sm ? 12 : 16)}</span>`;
+    };
+
+    // Archivos de la defensa
+    const FILES = [
+      { name: "Informe", ext: "docx", color: "#185abd", icon: "file" },
+      { name: "Minitab", ext: "mtw", color: "#6b8e23", text: "Mt" },
+      { name: "Presentación", ext: "pptx", color: "#c43e1c", icon: "presentation" },
+    ];
+    const STATE = {
+      ok: '<span class="chip calm">Listo</span>',
+      rev: '<span class="chip watch">Por revisar</span>',
+      edit: '<span class="chip watch">Editada ayer 6:00</span>',
+    };
+    function files(states, title = "Defensa · 3 archivos") {
+      return `<div class="card v-card">
+        <p class="eyebrow">${tile("drive", true)} ${title}</p>
+        ${FILES.map((f, i) => `<div class="rowx"><span class="tile sm" style="background:${f.color}">${f.text || icon(f.icon, 12)}</span>${f.name}<span class="end">${STATE[states[i]]}</span></div>`).join("")}
+      </div>`;
+    }
+
+    // Mini línea de tiempo con filas
+    function bars(from, to, blocks, rows = 1) {
+      const a = mins(from);
+      const span = mins(to) - a;
+      const hours = [];
+      for (let t = Math.ceil(a / 60) * 60; t <= a + span; t += 60) hours.push(t);
+      const pos = (hm) => ((mins(hm) - a) / span) * 100;
+      return `<div class="mb" style="height:${rows * 30 - 2}px;--step:${(60 / span) * 100}%;background-position:${((Math.ceil(a / 60) * 60 - a) / span) * 100}% 0">
+        ${blocks
+          .map((b) => {
+            const x = pos(b.s);
+            const w = pos(b.e) - x;
+            return `<div class="mb-b k-${b.k}${b.isNew ? " k-new" : ""}" style="top:${(b.row || 0) * 30 + 2}px;left:calc(${x}% + 1px);width:calc(${w}% - 2px)" title="${fmt(b.s)}–${fmt(b.e)}">${b.icon ? icon(b.icon, 12) : ""}${b.label || ""}</div>`;
+          })
+          .join("")}
+      </div>
+      <div class="mb-ticks">${hours.map((t) => `<span style="left:${((t - a) / span) * 100}%">${((Math.floor(t / 60) + 11) % 12) + 1}</span>`).join("")}</div>`;
+    }
+
+    const hero = (tone, eyebrow, big, title, sub, extra = "") => `
+      <div class="card hero tone-${tone}" style="padding:16px">
+        <span class="edge"></span>
+        <p class="eyebrow">${eyebrow}</p>
+        <div class="big-row" style="margin-top:8px"><span class="big-t">${big}</span><div><p class="b-title">${title}</p><p class="xs muted">${sub}</p></div></div>
+        ${extra}
+      </div>`;
+    const fact = (ic, k, v) => `<div class="fact">${icon(ic, 16)}<p class="k">${k}</p><p class="v">${v}</p></div>`;
+
+    // ---------------------------------------------------------------
+    // El flujo: de la configuración al cierre del viernes
+    // ---------------------------------------------------------------
+    const STEPS = [
+      {
+        group: "Antes del viernes",
+        time: "Una vez",
+        clock: "7:30",
+        title: "Conectar y escuchar",
+        date: "Configuración",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["cal", "gmail", "drive"],
+        card: () => `
+          <div class="card v-card"><p class="eyebrow">Conectado</p>
+            <div class="srcs">${["cal", "gmail", "drive"].map((k) => `<div class="src"><span class="ok">${icon("circle-check", 14)}</span>${tile(k)}${SRC[k].name}</div>`).join("")}</div>
+          </div>
+          <div class="card v-card"><p class="eyebrow">${icon("mail", 14)} Encontré en tu correo</p>
+            <div class="rowx">${icon("presentation", 16)}Defensa<span class="end mono xs muted">vie 9 · 2:00</span></div>
+            <div class="rowx">${icon("send", 16)}Avance semanal<span class="end mono xs muted">vie · antes de 4:00</span></div>
+          </div>`,
+        lines: [
+          ["nort", "Hola, John. Ya veo tu calendario, tu correo y la carpeta de tu defensa."],
+          ["nort", "En tu correo hay dos cosas: la defensa el viernes a las 2 y el avance semanal antes de las 4. ¿Las agrego a tu calendario?"],
+          ["john", "Sí, agrégalas."],
+          ["nort", "Listo. Y recuerdo que vas en bus: hora y media de viaje."],
+        ],
+        rules: [
+          "Lee el correo, pero pregunta antes de escribir en el calendario.",
+          "La rutina (bus, hora y media) se dice una vez en voz alta, no se llena en un formulario.",
+          "Asocia los 3 archivos de Drive al proyecto por la carpeta.",
+        ],
+        case: "§3 integraciones · §9 correos · §10 archivos · §19 crear evento",
+      },
+      {
+        group: "Antes del viernes",
+        time: "Jue 6:00",
+        clock: "18:00",
+        title: "La víspera",
+        date: "Jueves 8",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["cal", "drive"],
+        card: () =>
+          files(["ok", "rev", "edit"]) +
+          `<div class="card v-card"><p class="eyebrow">Mañana de 8 a 11</p>
+            ${bars("8:00", "11:00", [
+              { s: "8:00", e: "8:30", k: "meet", icon: "users" },
+              { s: "8:30", e: "9:00", k: "work", icon: "mail" },
+              { s: "9:00", e: "10:00", k: "prep", icon: "presentation", label: "Presentación", isNew: true },
+              { s: "10:00", e: "10:30", k: "meet", icon: "users" },
+              { s: "10:30", e: "11:00", k: "work", icon: "bus" },
+            ])}
+            <p class="mb-cap" style="margin-bottom:0">Desarrollo pasa a las 3:30</p>
+          </div>`,
+        lines: [
+          ["nort", "Mañana es tu defensa, a las 2. El informe ya está listo."],
+          ["nort", "Te faltan la presentación y Minitab. De 8 a 11 no tienes una hora libre. ¿Uso tu bloque de desarrollo de 9 a 10?"],
+          ["john", "Sí, y pasa desarrollo a la tarde."],
+          ["nort", "Hecho: presentación de 9 a 10 y desarrollo a las 3:30."],
+        ],
+        rules: [
+          "Detecta que la presentación (60 min) no cabe antes de las 11 y lo dice, en vez de solo marcarla como prioridad.",
+          "Propone dónde hacerla, pero no mueve un evento existente sin un “sí”.",
+          "Recordatorio de la víspera con lo que falta, no con todo.",
+        ],
+        case: "§8 tareas 1 y 3 · §20 recordatorio de 1 día antes · §21 detectar tareas que no caben",
+      },
+      {
+        group: "Viernes 9",
+        time: "8:00",
+        clock: "8:00",
+        title: "¿Qué tengo hoy?",
+        date: "Viernes 9",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["cal", "drive", "ruta"],
+        card: () =>
+          hero("act", "Hoy", "2:00", "Defensa", "Laboratorio de Investigación", `<div class="facts3">${fact("bus", "Sales", "11:00")}${fact("users", "Ahora", "Stand-up")}${fact("presentation", "9:00", "Presentación")}</div>`) +
+          `<div class="card v-card">${bars("8:00", "15:00", [
+            { s: "8:00", e: "8:30", k: "meet" },
+            { s: "8:30", e: "9:00", k: "work" },
+            { s: "9:00", e: "10:00", k: "prep" },
+            { s: "10:00", e: "10:30", k: "meet" },
+            { s: "10:30", e: "11:00", k: "work" },
+            { s: "11:00", e: "12:30", k: "bus", icon: "bus" },
+            { s: "12:30", e: "13:30", k: "prep" },
+            { s: "13:30", e: "14:00", k: "margin" },
+            { s: "14:00", e: "15:00", k: "def", icon: "presentation" },
+          ])}</div>`,
+        lines: [
+          ["john", "¿Qué tengo hoy?"],
+          ["nort", "Tu defensa es a las 2. Sales a las 11 en bus."],
+          ["nort", "Ahora, el stand-up. A las 9, la presentación: la editaste ayer a las 6 y le falta la revisión final."],
+        ],
+        rules: [
+          "Responde las 7 preguntas del caso en dos frases: lo principal, cuándo salir y qué hacer ahora.",
+          "Revisa el archivo antes de recomendar: existe, pero se editó ayer, así que falta la revisión.",
+          "La pantalla repite lo dicho con tres datos grandes; no hay que leer para entender.",
+        ],
+        case: "§11 y §12 pantalla inicial · §13 verificar la presentación · §21 menos de 10 segundos",
+      },
+      {
+        group: "Viernes 9",
+        time: "8:30",
+        clock: "8:30",
+        title: "Conflicto con el viaje",
+        date: "Viernes 9",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["cal"],
+        card: () => `
+          <div class="card v-card"><p class="eyebrow" style="color:var(--act)">${icon("alert", 14)} Se cruzan</p>
+            ${bars("10:30", "13:00", [
+              { s: "11:00", e: "12:30", k: "bus", icon: "bus", label: "Viaje" },
+              { s: "11:30", e: "12:30", k: "clash", icon: "users", label: "Cliente", row: 1 },
+            ], 2)}
+            <div class="opts"><button>Reprogramar</button><button>Mover viaje</button><button>Ver</button></div>
+          </div>`,
+        pick: ".opts button",
+        lines: [
+          ["nort", "Te agregaron una reunión con el cliente de 11:30 a 12:30, y a esa hora vas en el bus."],
+          ["nort", "¿La reprogramo, cambio tu viaje o prefieres verla?"],
+          ["john", "Pídeles pasarla al lunes a las 9."],
+          ["nort", "Les propongo el lunes a las 9. Mientras responden, la dejo marcada."],
+        ],
+        rules: [
+          "Esperó a que terminara el stand-up: el conflicto es importante pero no urgente.",
+          "Nunca lo resuelve solo. Ofrece las tres salidas del caso y espera la decisión.",
+          "Las mismas tres opciones existen como botones, por si John no puede hablar.",
+        ],
+        case: "§14 conflicto · §21 detectar conflictos y respetar bloques de viaje",
+      },
+      {
+        group: "Viernes 9",
+        time: "9:58",
+        clock: "9:58",
+        title: "30 minutos libres",
+        date: "Viernes 9",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["cal", "drive"],
+        card: () => `
+          <div class="card v-card"><p class="eyebrow">${icon("sparkles", 14)} 30 min libres</p>
+            ${bars("9:00", "11:00", [
+              { s: "9:00", e: "10:00", k: "prep", icon: "presentation" },
+              { s: "10:00", e: "10:30", k: "free", label: "Libre" },
+              { s: "10:30", e: "11:00", k: "work", icon: "bus" },
+            ])}
+            <div style="margin-top:12px">
+              <div class="rowx">${icon("mic", 16)}Ensayar<span class="end mono xs">30 min</span><span class="chip calm">Cabe</span></div>
+              <div class="rowx">${icon("table", 16)}Minitab<span class="end mono xs">15 min</span><span class="chip calm">Cabe</span></div>
+              <div class="rowx dim">${icon("send", 16)}Avance semanal<span class="end xs">Puede esperar</span></div>
+            </div>
+          </div>`,
+        lines: [
+          ["nort", "Se canceló la reunión de investigación. Tienes 30 minutos antes de prepararte para salir."],
+          ["nort", "Te alcanza para ensayar la presentación o revisar Minitab. ¿Cuál prefieres?"],
+          ["john", "Ensayo."],
+          ["nort", "Va. Te aviso a las 10:30."],
+        ],
+        rules: [
+          "Solo sugiere tareas que caben en el hueco. Nada de 60 minutos en uno de 30.",
+          "El avance semanal también cabe, pero vence a las 4 y puede esperar: no lo menciona.",
+          "Dos opciones como máximo, dichas como pregunta.",
+        ],
+        case: "§18 espacio libre · §21 recomendar tareas compatibles con el tiempo disponible",
+      },
+      {
+        group: "Viernes 9",
+        time: "10:15",
+        clock: "10:15",
+        title: "La defensa se adelanta",
+        date: "Viernes 9",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["gmail", "cal"],
+        card: () =>
+          hero("watch", `${icon("mail", 14)} Cambio importante`, "<s>2:00</s>1:30", "Defensa", "Adelantada 30 min") +
+          `<div class="card v-card">
+            <p class="mb-cap" style="margin-top:0">Antes</p>
+            ${bars("12:00", "15:00", [
+              { s: "12:00", e: "12:30", k: "bus", icon: "bus" },
+              { s: "12:30", e: "13:30", k: "prep" },
+              { s: "13:30", e: "14:00", k: "margin" },
+              { s: "14:00", e: "15:00", k: "def", icon: "presentation" },
+            ])}
+            <p class="mb-cap">Ahora</p>
+            ${bars("12:00", "15:00", [
+              { s: "12:00", e: "12:30", k: "bus", icon: "bus" },
+              { s: "12:30", e: "13:20", k: "prep" },
+              { s: "13:20", e: "13:30", k: "margin" },
+              { s: "13:30", e: "14:30", k: "def", icon: "presentation" },
+            ])}
+          </div>`,
+        lines: [
+          ["nort", "Perdón que interrumpa el ensayo: tu defensa se adelantó a la 1:30."],
+          ["nort", "Tu salida sigue a las 11. Al llegar preparas y haces la revisión final hasta la 1:20. Te quedan 10 minutos de margen."],
+          ["john", "Ok, gracias."],
+        ],
+        rules: [
+          "Interrumpe porque cambia un compromiso de hoy. Es una de las pocas razones para hacerlo.",
+          "Recalcula solo sus propios bloques (preparación, revisión, margen) y los recordatorios: “faltan 30 minutos” pasa a la 1:00.",
+          "Primero el cambio, después lo que sigue igual (la salida).",
+        ],
+        case: "§15 cambio de última hora · §20 recordatorios recalculados",
+      },
+      {
+        group: "Viernes 9",
+        time: "10:45",
+        clock: "10:45",
+        title: "Prepararte para salir",
+        date: "Viernes 9",
+        ctx: ["home", "En casa"],
+        ear: true,
+        src: ["ruta", "gmail", "drive"],
+        card: () => `
+          <div class="card countdown"><p class="eyebrow" style="justify-content:center">${icon("bus", 14)} Sales a las 11:00</p>
+            <p class="big-t" style="margin-top:10px">15<span style="font-size:22px;color:var(--muted-fg)"> min</span></p>
+            <div style="display:flex;gap:6px;justify-content:center;margin-top:12px"><span class="chip">Compu</span><span class="chip">Cargador</span></div>
+          </div>`,
+        lines: [
+          ["nort", "En 15 minutos sales. Lleva la compu y el cargador."],
+          ["john", "¿Tengo que llevar algo impreso?"],
+          ["nort", "No lo veo en ningún correo. Los tres archivos están en Drive."],
+        ],
+        rules: [
+          "Si no lo sabe, lo dice y explica dónde buscó. Nunca inventa.",
+          "La lista de qué llevar sale de lo que John dijo una vez, no de un formulario.",
+        ],
+        case: "§20 recordatorio de las 10:45 · §6 qué preparar",
+      },
+      {
+        group: "Viernes 9",
+        time: "11:20",
+        clock: "11:20",
+        title: "En el bus",
+        date: "Viernes 9",
+        ctx: ["bus", "En el bus"],
+        ear: true,
+        src: ["ruta", "cal"],
+        card: () => `
+          <div class="card v-card"><p class="eyebrow">${icon("bus", 14)} Llegas 12:30</p>
+            <div class="route">${icon("home", 15)}<div class="bar"><span style="width:22%"></span><i style="left:22%"></i></div>${icon("pin", 15)}</div>
+          </div>
+          <div class="card v-card"><p class="eyebrow">Cuando llegues</p>
+            ${bars("12:30", "14:30", [
+              { s: "12:30", e: "13:20", k: "prep", label: "Preparar" },
+              { s: "13:20", e: "13:30", k: "margin" },
+              { s: "13:30", e: "14:30", k: "def", icon: "presentation", label: "Defensa" },
+            ])}
+          </div>`,
+        lines: [
+          ["john", "¿Qué tengo cuando llegue?"],
+          ["nort", "Llegas a las 12:30. Preparas tu equipo, revisión final y a la 1:30 tu defensa."],
+          ["nort", "Si quieres, te leo las notas de la presentación mientras vas."],
+          ["john", "No, quiero descansar."],
+          ["nort", "Perfecto. Te aviso antes de tu parada."],
+        ],
+        rules: [
+          "En el bus solo propone tareas ligeras que se escuchan: nada de concentración.",
+          "Ofrece una sola cosa. Si John prefiere descansar, calla hasta la parada salvo algo importante.",
+          "La pantalla bloqueada muestra lo mismo, por si mira sin desbloquear.",
+        ],
+        case: "§5 restricción del transporte · §4 del concepto: en el bus",
+      },
+      {
+        group: "Viernes 9",
+        time: "11:45",
+        clock: "11:45",
+        title: "El bus se atrasa",
+        date: "Viernes 9",
+        ctx: ["bus", "En el bus"],
+        ear: true,
+        src: ["voz", "cal"],
+        card: () =>
+          hero("watch", `${icon("clock", 14)} +20 min`, "<s>12:30</s>12:50", "Nueva llegada", "Te queda menos margen, pero alcanza") +
+          `<div class="card v-card">${bars("12:30", "14:00", [
+            { s: "12:30", e: "12:50", k: "bus", icon: "bus" },
+            { s: "12:50", e: "13:10", k: "prep", label: "Preparar" },
+            { s: "13:10", e: "13:25", k: "prep", label: "Revisión" },
+            { s: "13:25", e: "13:30", k: "margin" },
+            { s: "13:30", e: "14:00", k: "def", icon: "presentation" },
+          ])}<p class="mb-cap" style="margin-bottom:0;color:#fde68a">Margen: 5 min</p></div>`,
+        lines: [
+          ["john", "El bus viene con 20 minutos de retraso."],
+          ["nort", "Entendido: llegas a las 12:50. Te queda menos margen, pero alcanza."],
+          ["nort", "Preparas hasta la 1:10, revisión hasta la 1:25 y te quedan 5 minutos. ¿Le aviso al laboratorio?"],
+          ["john", "No hace falta."],
+          ["nort", "Va. Te aviso en tu parada."],
+        ],
+        rules: [
+          "Primero lo que está a salvo (“alcanza”), después el detalle.",
+          "Comprime preparación y revisión, nunca la defensa, y avisa que el margen bajó.",
+          "Pide permiso antes de escribirle a otra persona.",
+        ],
+        case: "§16 retraso del autobús",
+      },
+      {
+        group: "Viernes 9",
+        time: "1:00",
+        clock: "13:00",
+        title: "Minitab pendiente",
+        date: "Viernes 9",
+        ctx: ["pin", "En el laboratorio"],
+        ear: false,
+        src: ["drive", "cal"],
+        card: () => `
+          <div class="card hero tone-watch" style="padding:16px"><span class="edge"></span>
+            <p class="eyebrow">Pendiente antes de la defensa</p>
+            <div class="big-row" style="margin-top:10px"><span class="tile" style="background:#6b8e23;width:44px;height:44px;font-size:15px">Mt</span><div><p class="b-title">Revisar Minitab</p><p class="xs muted">15 min · tienes hasta la 1:25</p></div></div>
+            <button class="btn btn-primary btn-block" style="margin-top:14px">${icon("table", 16)}Abrir Minitab</button>
+          </div>`,
+        lines: [
+          ["nort", "Te falta revisar Minitab: son 15 minutos. Si empiezas ya, terminas antes de la 1:25."],
+          ["john", "Toca «Abrir Minitab»", "tap"],
+          ["nort", "Abierto desde Drive."],
+        ],
+        rules: [
+          "Sin audífonos y con gente alrededor, Nort no habla en voz alta: escribe y deja un botón grande.",
+          "Recomienda hacerlo ya porque cabe y no hay otro compromiso en ese tiempo.",
+          "Cuenta solo la revisión (15 min), no la tarea completa (45 min).",
+        ],
+        case: "§17 tarea incompleta",
+      },
+      {
+        group: "Viernes 9",
+        time: "1:25",
+        clock: "13:25",
+        title: "Todo listo",
+        date: "Viernes 9",
+        ctx: ["pin", "En el laboratorio"],
+        ear: false,
+        src: ["drive", "cal"],
+        card: () => hero("calm", "En 5 minutos", "1:30", "Defensa", "Laboratorio de Investigación") + files(["ok", "ok", "ok"], "Los 3 archivos"),
+        lines: [
+          ["nort", "Faltan 5 minutos. Informe, Minitab y presentación: todo listo."],
+          ["nort", "Fue una mañana movida y llegaste con todo. Mucha suerte."],
+        ],
+        rules: [
+          "Reconoce el día sin dramatizar y sin dar consejos.",
+          "Después, silencio total durante la defensa.",
+        ],
+        case: "§20 recordatorio previo a la defensa · §23 resultado final",
+      },
+      {
+        group: "Viernes 9",
+        time: "2:35",
+        clock: "14:35",
+        title: "Cierre del día",
+        date: "Viernes 9",
+        ctx: ["home", "De regreso"],
+        ear: true,
+        src: ["cal", "gmail"],
+        card: () => `
+          <div class="card v-card"><p class="eyebrow">Lo que queda hoy</p>
+            <div class="rowx">${icon("send", 16)}Avance semanal<span class="end mono xs">2:45–3:15</span></div>
+            <div class="rowx">${icon("briefcase", 16)}Desarrollo<span class="end mono xs">3:30</span></div>
+            <div class="rowx">${icon("users", 16)}Cliente<span class="end"><span class="chip calm">Lunes 9:00</span></span></div>
+          </div>`,
+        lines: [
+          ["nort", "¿Cómo te fue?"],
+          ["john", "Bien, creo que bien."],
+          ["nort", "Qué bueno. El cliente aceptó el lunes a las 9."],
+          ["nort", "Te queda el avance semanal antes de las 4. ¿Te reservo de 2:45 a 3:15?"],
+          ["john", "Sí."],
+          ["nort", "Listo."],
+        ],
+        rules: [
+          "Pregunta “¿cómo te fue?” una sola vez y sigue; no insiste.",
+          "Junta las respuestas pendientes (el cliente) en un solo momento tranquilo.",
+          "El avance semanal llega cuando ya no compite con la defensa.",
+        ],
+        case: "§8 tarea 6 · §9 correo del jefe · §22 nada se pierde aunque el día cambie",
+      },
+    ];
+
+    // ---------------------------------------------------------------
+    // Render
+    // ---------------------------------------------------------------
+    const $rail = document.getElementById("rail");
+    const $card = document.getElementById("card");
+    const $caps = document.getElementById("captions");
+    const $orb = document.getElementById("orb");
+    const $hint = document.getElementById("hint");
+    const $screen = document.getElementById("screen");
+    let current = 0;
+    let voiceOn = false;
+    let run = 0;
+
+    let lastGroup = "";
+    STEPS.forEach((s, i) => {
+      if (s.group !== lastGroup) {
+        $rail.insertAdjacentHTML("beforeend", `<p class="group">${s.group}</p>`);
+        lastGroup = s.group;
+      }
+      const b = document.createElement("button");
+      b.className = "stp";
+      b.innerHTML = `<span class="t">${s.time}</span>${icon(s.ctx[0], 15)}<span>${s.title}</span>`;
+      b.addEventListener("click", () => go(i));
+      $rail.appendChild(b);
+    });
+
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    function speak(text) {
+      return new Promise((resolve) => {
+        if (!("speechSynthesis" in window)) return resolve();
+        const u = new SpeechSynthesisUtterance(text);
+        const voice = speechSynthesis.getVoices().find((v) => v.lang.startsWith("es"));
+        if (voice) u.voice = voice;
+        u.lang = voice ? voice.lang : "es-ES";
+        u.rate = 1.05;
+        u.onend = u.onerror = resolve;
+        speechSynthesis.speak(u);
+        setTimeout(resolve, 2000 + text.length * 90);
+      });
+    }
+
+    function idleHint(step) {
+      $hint.textContent = step.ear
+        ? "Presiona tus audífonos o toca para hablar"
+        : "Sin audífonos: Nort te responde en pantalla";
+    }
+
+    async function play(step) {
+      const my = ++run;
+      if ("speechSynthesis" in window) speechSynthesis.cancel();
+      $caps.innerHTML = "";
+      await wait(250);
+      for (const [who, text, kind] of step.lines) {
+        if (my !== run) return;
+        const el = document.createElement("div");
+        el.className = `cap ${who}${kind ? " " + kind : ""}`;
+        el.innerHTML = `<span class="who">${icon(who === "nort" ? "nort" : kind === "tap" ? "tap" : "mic", 12)}</span><p>${text}</p>`;
+
+        if (who === "john") {
+          $orb.className = "orb listening";
+          $hint.textContent = kind === "tap" ? "John toca la pantalla" : "Te escucho…";
+          await wait(700);
+          if (my !== run) return;
+          $caps.appendChild(el);
+          if (step.pick) $card.querySelector(step.pick)?.classList.add("pick");
+          await wait(500 + text.length * 25);
+        } else {
+          $orb.className = step.ear ? "orb speaking" : "orb";
+          $hint.textContent = step.ear ? "Nort está hablando" : "Nort te escribe";
+          $caps.appendChild(el);
+          if (voiceOn && step.ear) await speak(text);
+          else await wait(700 + text.length * 26);
+        }
+        $screen.scrollTo({ top: $screen.scrollHeight, behavior: "smooth" });
+        await wait(250);
+      }
+      if (my !== run) return;
+      $orb.className = "orb";
+      idleHint(step);
+    }
+
+    function go(i) {
+      current = Math.max(0, Math.min(STEPS.length - 1, i));
+      const s = STEPS[current];
+      [...$rail.querySelectorAll(".stp")].forEach((b, k) => b.classList.toggle("on", k === current));
+
+      const bar = document.querySelector(".statusbar span");
+      if (bar) bar.textContent = fmt(s.clock);
+      document.getElementById("ctx").innerHTML = `${icon(s.ctx[0], 14)}${s.ctx[1]}`;
+      const ear = document.getElementById("ear");
+      ear.className = "ear" + (s.ear ? "" : " off");
+      ear.innerHTML = `${icon("headphones", 14)}${s.ear ? "Audífonos" : "Sin audífonos"}`;
+      document.getElementById("date").innerHTML = `${s.date}<span class="mono">${s.time === "Una vez" ? "" : fmt(s.clock)}</span>`;
+      $card.innerHTML = s.card();
+      $screen.scrollTo({ top: 0 });
+
+      document.getElementById("n-count").textContent = `Paso ${current + 1} de ${STEPS.length} · ${s.time}`;
+      document.getElementById("n-title").textContent = s.title;
+      document.getElementById("n-src").innerHTML = s.src.map((k) => `<span class="chip">${tile(k, true)}${SRC[k].name}</span>`).join("");
+      document.getElementById("n-rules").innerHTML = s.rules.map((r) => `<li>${r}</li>`).join("");
+      document.getElementById("n-case").textContent = s.case;
+
+      $orb.className = "orb";
+      idleHint(s);
+      play(s);
+    }
+
+    document.getElementById("prev").addEventListener("click", () => go(current - 1));
+    document.getElementById("next").addEventListener("click", () => go(current + 1));
+    document.getElementById("play").addEventListener("click", () => play(STEPS[current]));
+    document.getElementById("voice").addEventListener("click", (e) => {
+      voiceOn = !voiceOn;
+      e.currentTarget.classList.toggle("on", voiceOn);
+      play(STEPS[current]);
+    });
+    $orb.addEventListener("click", () => play(STEPS[current]));
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") go(current + 1);
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft") go(current - 1);
+    });
+    if ("speechSynthesis" in window) speechSynthesis.getVoices();
+
+    go(0);
+  </script>
+</body>
+</html>
