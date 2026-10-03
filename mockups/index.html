@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · Opciones de interfaz</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    body {
+      min-height: 100%;
+    }
+
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 48px 28px 80px;
+    }
+
+    .intro {
+      max-width: 760px;
+    }
+
+    .intro h1 {
+      font-size: 34px;
+      margin-top: 14px;
+    }
+
+    .intro p {
+      margin-top: 12px;
+      color: var(--muted-fg);
+      font-size: 15px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 28px;
+      margin-top: 40px;
+    }
+
+    .option {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 20px;
+      border-radius: 28px;
+      background: oklch(0.19 0.02 240 / 70%);
+      border: 1px solid var(--border);
+    }
+
+    .frame {
+      position: relative;
+      width: 331px;
+      height: 714px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    .frame iframe {
+      width: 414px;
+      height: 892px;
+      border: 0;
+      transform: scale(0.8);
+      transform-origin: 0 0;
+      background: transparent;
+    }
+
+    .option h3 {
+      font-size: 19px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .option .what {
+      font-size: 14px;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+
+    .facts {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .facts div {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 10px;
+    }
+
+    .facts dt {
+      color: var(--muted-fg);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+
+    .open {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .combo {
+      margin-top: 48px;
+      padding: 24px;
+      border-radius: 24px;
+      border: 1px solid oklch(0.82 0.1 185 / 25%);
+      background: oklch(0.82 0.1 185 / 6%);
+      max-width: 860px;
+    }
+
+    .combo h2 {
+      font-size: 20px;
+    }
+
+    .combo ul {
+      margin: 12px 0 0 18px;
+      display: grid;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+
+    .combo strong {
+      color: var(--fg);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="intro">
+      <div class="brand"><svg class="i" width="20" height="20"><use href="#i-nort"/></svg>Nort</div>
+      <h1>Opciones de interfaz para el trayecto de John</h1>
+      <p>
+        Mockups mobile-first para el MVP v1: <strong style="color: var(--fg)">capturar en el bus con poca mirada</strong> y
+        <strong style="color: var(--fg)">llegar con el día claro</strong>. Toman de Flow su lenguaje visual (azul noche,
+        turquesa, Geist, tarjetas suaves), la frase que interpreta el momento, la franja de tiempo con la línea de “ahora”
+        y la barra para hablar o escribir. Son interactivos: toquen botones y mantengan presionado el micrófono.
+      </p>
+      <div class="legend">
+        <span class="chip calm"><span class="dot" style="--tone: var(--calm)"></span>En calma</span>
+        <span class="chip watch"><span class="dot" style="--tone: var(--watch)"></span>Atención</span>
+        <span class="chip act"><span class="dot" style="--tone: var(--act)"></span>Actuar</span>
+        <span class="chip primary">Escenario: martes, bus Lumaca La Lima → San José</span>
+      </div>
+    </header>
+
+    <a class="option" href="07-flujo-voz.html" target="_blank" style="display: block; margin-top: 32px; text-decoration: none; color: inherit; border-color: oklch(0.82 0.1 185 / 40%)">
+      <h3>7 · Flujo completo por voz</h3>
+      <p class="what">El caso de prueba de la defensa de John de principio a fin, en 12 pasos: John pregunta en voz alta y Nort responde breve, con una sola tarjeta de apoyo en pantalla. Incluye conflicto, defensa adelantada, retraso del bus y cierre del día. Se puede escuchar a Nort con la voz del navegador.</p>
+      <span class="open">Abrir el flujo<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></span>
+    </a>
+
+    <a class="option" href="08-app.html" target="_blank" style="display: block; margin-top: 16px; text-decoration: none; color: inherit; border-color: oklch(0.82 0.1 185 / 40%)">
+      <h3>8 · La app: Hoy, Nort y Tú <span class="chip primary" style="vertical-align: middle; margin-left: 4px">nuevo</span></h3>
+      <p class="what">La interfaz dentro de la app con tres pestañas abajo. Hoy: el viaje en vivo y el día en bloques (escalera, pendientes y avisos). Nort: la red de lo que Nort sabe, que se arrastra, se acerca y se explora tocando nodos, mientras Nort piensa en voz alta; desde ahí se le llama o se chatea con él. Tú: perfil, conexiones (Google, Waze, otras APIs) y cómo quieres que sea Nort.</p>
+      <span class="open">Abrir la app<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></span>
+    </a>
+
+    <section class="grid">
+      <article class="option">
+        <div class="frame"><iframe src="01-un-toque.html" title="Opción 1" loading="lazy"></iframe></div>
+        <h3>1 · Un toque</h3>
+        <p class="what">Tres botones gigantes en la zona del pulgar. Un toque guarda la preocupación; el detalle es opcional y sale de la agenda.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>La captura con botones de un toque (E4).</dd></div>
+          <div><dt>De Flow</dt><dd>Sugerencias que salen del contexto real del día, sin escribir.</dd></div>
+        </dl>
+        <a class="open" href="01-un-toque.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option">
+        <div class="frame"><iframe src="02-susurro.html" title="Opción 2" loading="lazy"></iframe></div>
+        <h3>2 · Susurro</h3>
+        <p class="what">Mantener presionado y hablar bajito con audífonos. Nort muestra lo que entendió y lo deja listo para confirmar al llegar.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>La nota de voz en voz baja y la frase corta escrita (E4).</dd></div>
+          <div><dt>De Flow</dt><dd>La barra con micrófono y el ciclo “hablar → entiende → organiza”.</dd></div>
+        </dl>
+        <a class="open" href="02-susurro.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option">
+        <div class="frame"><iframe src="03-llegada.html" title="Opción 3" loading="lazy"></iframe></div>
+        <h3>3 · Llegada</h3>
+        <p class="what">Al bajar del bus: una frase que resume el momento y tres bloques (lo urgente, lo que se puede mover y lo que quedó de ayer).</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>Si el resumen acorta la hora de reorganizar al llegar (E3).</dd></div>
+          <div><dt>De Flow</dt><dd>El “HOY interpretado”: frase con tono, color de estado y la tarea resaltada.</dd></div>
+        </dl>
+        <a class="open" href="03-llegada.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option">
+        <div class="frame"><iframe src="04-ruta.html" title="Opción 4" loading="lazy"></iframe></div>
+        <h3>4 · Ruta</h3>
+        <p class="what">El trayecto en vivo con lo que soltó en cada parada. Si hay retraso, deja listo el aviso para el equipo.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>La fricción “llegar tarde duele en público” (E1).</dd></div>
+          <div><dt>De Flow</dt><dd>La franja de la mañana con bloques y la línea de “ahora”.</dd></div>
+        </dl>
+        <a class="open" href="04-ruta.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option">
+        <div class="frame"><iframe src="05-pantalla-bloqueada.html" title="Opción 5" loading="lazy"></iframe></div>
+        <h3>5 · Pantalla bloqueada</h3>
+        <p class="what">Todo desde la pantalla de bloqueo: hora de llegada, lo primero al llegar y tres botones para soltar algo sin desbloquear.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>La restricción de “poca o ninguna mirada” (E2).</dd></div>
+          <div><dt>De Flow</dt><dd>Una sola conclusión visible, sin datos crudos.</dd></div>
+        </dl>
+        <a class="open" href="05-pantalla-bloqueada.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option" style="border-color: oklch(0.82 0.1 185 / 40%)">
+        <div class="frame"><iframe src="05-v2-widget-asistente.html" title="Opción 5 v2" loading="lazy"></iframe></div>
+        <h3>5 v2 · Viaje en vivo con Waze <span class="chip primary" style="vertical-align: middle; margin-left: 4px">nuevo</span></h3>
+        <p class="what">Arriba, el viaje en vivo con el tráfico de Waze. Nort lo traduce a una notificación empática sobre sus compromisos (“No depende de ti. El stand-up sigue a salvo”) y marca en la escalera del día lo que queda en riesgo. Debajo, los enlaces de cada proyecto.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>Si saber a tiempo qué sí y qué no está en riesgo baja el “¿llegaré?” que John siente desde que sale (E1).</dd></div>
+          <div><dt>De Flow</dt><dd>Una sola conclusión arriba y cero datos crudos: íconos en vez de texto.</dd></div>
+        </dl>
+        <a class="open" href="05-v2-widget-asistente.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+
+      <article class="option">
+        <div class="frame"><iframe src="06-modo-descanso.html" title="Opción 6" loading="lazy"></iframe></div>
+        <h3>6 · Modo descanso</h3>
+        <p class="what">Cuando todo está bajo control, Nort le dice a John que puede descansar y lo despierta antes de su parada.</p>
+        <dl class="facts">
+          <div><dt>Prueba</dt><dd>“Descansar en el bus es una opción válida” (E2).</dd></div>
+          <div><dt>De Flow</dt><dd>El tono calmado: “nada urgente ahora”, sin presión de productividad.</dd></div>
+        </dl>
+        <a class="open" href="06-modo-descanso.html" target="_blank">Abrir en pantalla completa<svg class="i" width="14" height="14"><use href="#i-chevron-right"/></svg></a>
+      </article>
+    </section>
+
+    <section class="combo">
+      <h2>Cómo se podrían combinar</h2>
+      <ul>
+        <li><strong>MVP v1 mínimo:</strong> una forma de captura (1 o 5) más la Llegada (3). Es exactamente lo que describe E4.</li>
+        <li><strong>Dirección actual del equipo:</strong> el widget 5 v2, que junta captura, el día en bloques y los enlaces de cada proyecto en la pantalla bloqueada.</li>
+        <li><strong>Para el Banco de Contraste:</strong> mostrar 1, 2 y 5 lado a lado y preguntar cuál usarían de verdad en el bus.</li>
+        <li><strong>Para después (v2):</strong> Ruta (4) y Modo descanso (6), si la evidencia confirma que el retraso y el descanso pesan tanto como creemos.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="icons.js"></script>
+</body>
+</html>

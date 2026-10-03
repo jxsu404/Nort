@@ -1,0 +1,1251 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nort · Opción 5 v2 — Viaje en vivo con Waze</title>
+  <link rel="stylesheet" href="nort.css" />
+  <style>
+    .phone.lock {
+      background: radial-gradient(420px 380px at 20% 10%, oklch(0.42 0.08 200 / 70%), transparent 70%),
+        radial-gradient(420px 420px at 90% 70%, oklch(0.35 0.08 260 / 60%), transparent 70%),
+        linear-gradient(170deg, oklch(0.22 0.04 230), oklch(0.12 0.02 250));
+    }
+
+    .lock .screen {
+      gap: 10px;
+      padding: 0 14px 40px;
+    }
+
+    .clock {
+      text-align: center;
+      padding: 8px 0 6px;
+    }
+
+    .clock .date {
+      font-size: 15px;
+      font-weight: 500;
+      opacity: 0.85;
+    }
+
+    .clock .big {
+      font-size: 68px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+    }
+
+    .glass {
+      border-radius: 24px;
+      padding: 14px;
+      background: oklch(0.2 0.02 240 / 58%);
+      border: 1px solid oklch(1 0 0 / 12%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .logo {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    /* ---------- Viaje en vivo (tráfico de Waze) ---------- */
+
+    .trip-live {
+      cursor: pointer;
+    }
+
+    .t-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .waze {
+      width: 22px;
+      height: 22px;
+      flex: none;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      background: #33ccff;
+      color: #0b2a3a;
+    }
+
+    .t-head .chip {
+      height: 22px;
+      padding: 0 8px;
+      font-size: 11.5px;
+    }
+
+    .t-eta {
+      margin-left: auto;
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .t-eta b {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .t-eta small {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-fg);
+    }
+
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .track > svg {
+      flex: none;
+      color: var(--muted-fg);
+    }
+
+    .rail {
+      position: relative;
+      flex: 1;
+      height: 6px;
+      border-radius: 99px;
+      background: oklch(1 0 0 / 10%);
+    }
+
+    .rail .fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      border-radius: 99px;
+      background: linear-gradient(90deg, oklch(0.82 0.1 185 / 35%), var(--primary));
+      transition: width 0.6s;
+    }
+
+    .rail .jam {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      border-radius: 99px;
+      transition: left 0.6s, width 0.6s, opacity 0.3s;
+    }
+
+    .rail .me,
+    .rail .inc {
+      position: absolute;
+      top: 50%;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+    }
+
+    .rail .me {
+      z-index: 1;
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: var(--primary-fg);
+      box-shadow: 0 0 0 4px oklch(0.82 0.1 185 / 22%);
+      transition: left 0.6s;
+    }
+
+    .rail .inc {
+      width: 20px;
+      height: 20px;
+      background: oklch(0.2 0.02 240);
+      border: 1.5px solid currentColor;
+      transition: opacity 0.3s;
+    }
+
+    .t-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      font-size: 12.5px;
+      color: var(--muted-fg);
+    }
+
+    .t-status .dot,
+    .n-title .dot {
+      background: var(--tone);
+    }
+
+    /* Notificación empática */
+    .notif {
+      position: relative;
+      padding: 12px 14px;
+      border-radius: 22px;
+      background: oklch(0.27 0.02 240 / 72%);
+      border: 1px solid oklch(1 0 0 / 12%);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .notif.in {
+      animation: drop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    }
+
+    @keyframes drop {
+      from {
+        transform: translateY(-14px) scale(0.97);
+        opacity: 0;
+      }
+    }
+
+    .notif.stacked {
+      margin-bottom: 8px;
+    }
+
+    .notif.stacked::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: -9px;
+      height: 9px;
+      border-radius: 0 0 16px 16px;
+      background: oklch(0.24 0.02 240 / 55%);
+      border: 1px solid oklch(1 0 0 / 8%);
+      border-top: 0;
+    }
+
+    .n-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    .n-head .logo {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+    }
+
+    .n-head b {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .n-head .when {
+      margin-left: auto;
+    }
+
+    .n-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 8px;
+      font-size: 14.5px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .n-body {
+      margin-top: 2px;
+      font-size: 13.5px;
+      line-height: 1.4;
+      opacity: 0.88;
+    }
+
+    .n-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .n-actions button {
+      flex: 1;
+      height: 34px;
+      border-radius: 11px;
+      background: oklch(1 0 0 / 9%);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .n-actions .primary {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    .n-done {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--calm);
+    }
+
+    /* Controles para simular el viaje (fuera del teléfono) */
+    .stage {
+      gap: 16px;
+    }
+
+    .sim {
+      display: flex;
+      gap: 4px;
+      padding: 5px;
+      border-radius: 16px;
+      background: oklch(1 0 0 / 5%);
+      border: 1px solid var(--border);
+    }
+
+    .sim button {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 11px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+
+    .sim button .mono {
+      font-size: 11.5px;
+      opacity: 0.8;
+    }
+
+    .sim button.on {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+
+    html.embedded .sim {
+      display: none;
+    }
+
+    /* ---------- Widget ---------- */
+
+    .w-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .conclusion {
+      margin-top: 10px;
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    /* Línea de tiempo del día */
+    .day {
+      position: relative;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid oklch(1 0 0 / 10%);
+    }
+
+    /* Escalera: una fila por tema, cada paso más abajo y más a la derecha */
+    .stairs {
+      position: relative;
+      margin-top: 10px;
+      background:
+        linear-gradient(90deg, oklch(1 0 0 / 10%) 0 1px, transparent 1px),
+        repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), oklch(1 0 0 / 8%) calc(25% - 1px) 25%);
+    }
+
+    .steps {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .steps path {
+      fill: none;
+      stroke: oklch(1 0 0 / 30%);
+      stroke-width: 1.2;
+      stroke-dasharray: 2 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .blk {
+      position: absolute;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .blk:hover {
+      transform: translateY(-1px);
+    }
+
+    .lbl {
+      position: absolute;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .lbl .t {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--muted-fg);
+    }
+
+    .blk.risk {
+      outline: 1.5px solid var(--act);
+      outline-offset: 1px;
+      animation: risk 1.4s ease-out infinite;
+    }
+
+    @keyframes risk {
+      0% {
+        box-shadow: 0 0 0 0 rgb(251 113 133 / 55%);
+      }
+      100% {
+        box-shadow: 0 0 0 9px rgb(251 113 133 / 0%);
+      }
+    }
+
+    .lbl.risk .t {
+      color: #fda4af;
+    }
+
+    .lbl .rk {
+      width: 14px;
+      height: 14px;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: oklch(0.18 0.03 240);
+    }
+
+    .k-bus {
+      background: rgb(56 189 248 / 18%);
+      border-color: rgb(56 189 248 / 35%);
+      color: #7dd3fc;
+    }
+
+    .k-meet {
+      background: rgb(167 139 250 / 20%);
+      border-color: rgb(167 139 250 / 45%);
+      color: #ddd6fe;
+    }
+
+    .k-p1 {
+      background: rgb(251 113 133 / 30%);
+      border-color: rgb(251 113 133 / 70%);
+      color: #fecdd3;
+    }
+
+    .k-p2 {
+      background: rgb(251 191 36 / 26%);
+      border-color: rgb(251 191 36 / 65%);
+      color: #fde68a;
+    }
+
+    .k-p3 {
+      background: rgb(52 211 153 / 24%);
+      border-color: rgb(52 211 153 / 60%);
+      color: #a7f3d0;
+    }
+
+    .past {
+      position: absolute;
+      top: -4px;
+      bottom: -4px;
+      left: 0;
+      z-index: 2;
+      border-radius: 6px 0 0 6px;
+      background: oklch(0.15 0.02 240 / 55%);
+      pointer-events: none;
+    }
+
+    .now {
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      width: 2px;
+      border-radius: 2px;
+      background: var(--fg);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .now::before {
+      content: "";
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--fg);
+    }
+
+    .ticks {
+      position: relative;
+      height: 14px;
+      margin-top: 6px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted-fg);
+    }
+
+    .ticks span {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+
+    .ticks span:first-child {
+      transform: none;
+    }
+
+    .ticks span:last-child {
+      transform: translateX(-100%);
+    }
+
+    .tip {
+      position: absolute;
+      top: -6px;
+      z-index: 5;
+      padding: 5px 9px;
+      border-radius: 9px;
+      background: oklch(0.95 0.01 90);
+      color: oklch(0.2 0.02 240);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .tip.show {
+      opacity: 1;
+    }
+
+    .quick {
+      display: grid;
+      grid-template-columns: repeat(3, 44px) 1fr;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .quick button {
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: oklch(1 0 0 / 8%);
+    }
+
+    .quick .talk {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      background: oklch(0.82 0.1 185 / 16%);
+      color: var(--primary);
+    }
+
+    /* ---------- Tarjetas de proyecto con enlaces ---------- */
+
+    .proj {
+      transition: box-shadow 0.4s;
+    }
+
+    .proj.flash {
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+
+    .p-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .p-head .rank {
+      width: 18px;
+      height: 18px;
+      flex: none;
+      border-radius: 99px;
+      display: grid;
+      place-items: center;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: oklch(0.18 0.03 240);
+    }
+
+    .p-head .time {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .p-sub {
+      margin: 2px 0 0 26px;
+      font-size: 12px;
+      color: var(--muted-fg);
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px 6px;
+      margin-top: 12px;
+    }
+
+    .link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+
+    .link .name {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      opacity: 0.8;
+    }
+
+    .app {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      box-shadow: inset 0 0 0 1px oklch(1 0 0 / 14%), 0 6px 14px -6px oklch(0 0 0 / 60%);
+      transition: transform 0.12s;
+    }
+
+    .link:active .app {
+      transform: scale(0.92);
+    }
+
+    .link.new .app {
+      animation: pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(0.3);
+        opacity: 0;
+      }
+    }
+
+    .add .app {
+      background: transparent;
+      color: var(--primary);
+      box-shadow: inset 0 0 0 1.5px oklch(0.82 0.1 185 / 45%);
+      border: 0;
+    }
+
+    .footnote {
+      text-align: center;
+      font-size: 11px;
+      opacity: 0.55;
+    }
+
+    /* Hoja para agregar enlaces */
+    .sheet h3 {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px 8px;
+      margin-top: 16px;
+    }
+
+    .paste {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      padding: 6px 6px 6px 12px;
+      border-radius: 14px;
+      background: oklch(1 0 0 / 6%);
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+
+    .paste input {
+      flex: 1;
+      min-width: 0;
+      height: 36px;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--fg);
+      font: inherit;
+      font-size: 14px;
+    }
+
+    .paste input::placeholder {
+      color: var(--muted-fg);
+    }
+
+    .paste button {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: var(--primary-fg);
+      font-size: 13px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="phone lock" id="phone">
+      <div class="statusbar" data-time="kölbi"></div>
+
+      <main class="screen" id="screen">
+        <div class="clock">
+          <p class="date">martes, 6 de octubre</p>
+          <p class="big" id="clock">7:03</p>
+        </div>
+
+        <section class="glass trip-live" id="trip" title="Toca para avanzar el viaje">
+          <div class="t-head">
+            <span class="waze"><svg class="i" width="15" height="15"><use href="#i-waze"/></svg></span>Lumaca
+            <span class="chip" id="t-delay"></span>
+            <span class="t-eta"><small>llegas</small><b id="t-eta"></b></span>
+          </div>
+          <div class="track">
+            <svg class="i" width="15" height="15"><use href="#i-home"/></svg>
+            <div class="rail">
+              <span class="fill" id="t-fill"></span>
+              <span class="jam" id="t-jam"></span>
+              <b class="inc" id="t-inc"><svg class="i" width="11" height="11"><use href="#i-alert"/></svg></b>
+              <i class="me" id="t-me"><svg class="i" width="13" height="13"><use href="#i-bus"/></svg></i>
+            </div>
+            <svg class="i" width="15" height="15"><use href="#i-briefcase"/></svg>
+          </div>
+          <p class="t-status"><span class="dot"></span><span id="t-status"></span></p>
+        </section>
+
+        <section class="notif" id="notif"></section>
+
+        <section class="glass" id="widget">
+          <div class="w-head">
+            <span class="logo"><svg class="i" width="13" height="13"><use href="#i-nort"/></svg></span>Nort
+          </div>
+
+          <p class="conclusion">Lo primero: <span class="hl">presentación 10:00</span></p>
+
+          <div class="day">
+            <p class="eyebrow" style="font-size: 10px">Hoy</p>
+            <div class="stairs" id="stairs">
+              <svg class="steps" id="steps" preserveAspectRatio="none"><path id="steps-path" /></svg>
+              <div class="past" id="past"></div>
+              <div class="now" id="now"></div>
+            </div>
+            <div class="ticks">
+              <span style="left: 0">6</span>
+              <span style="left: 25%">9</span>
+              <span style="left: 50%">12</span>
+              <span style="left: 75%">15</span>
+              <span style="left: 100%">18</span>
+            </div>
+            <div class="tip" id="tip"></div>
+          </div>
+
+          <div class="quick">
+            <button aria-label="Soltar algo de trabajo"><svg class="i" width="18" height="18" style="color: var(--occupied)"><use href="#i-briefcase"/></svg></button>
+            <button aria-label="Soltar algo personal"><svg class="i" width="18" height="18" style="color: var(--calm)"><use href="#i-home"/></svg></button>
+            <button aria-label="No se me olvide"><svg class="i" width="18" height="18" style="color: var(--primary)"><use href="#i-bookmark"/></svg></button>
+            <button class="talk"><svg class="i" width="16" height="16"><use href="#i-mic"/></svg>Hablar</button>
+          </div>
+        </section>
+
+        <div id="projects"></div>
+
+        <p class="footnote">Tus enlaces por proyecto. Toca + para agregar.</p>
+      </main>
+
+      <div class="sheet-backdrop" id="backdrop"></div>
+      <div class="sheet" id="sheet">
+        <div class="grabber"></div>
+        <h3 id="sheet-title">Agregar enlace</h3>
+        <div class="picker" id="picker"></div>
+        <form class="paste" id="paste">
+          <svg class="i" width="16" height="16" style="color: var(--muted-fg)"><use href="#i-link"/></svg>
+          <input placeholder="Pegar un enlace…" />
+          <button>Agregar</button>
+        </form>
+      </div>
+
+      <div class="toast" id="toast"><svg class="i" width="18" height="18"><use href="#i-link"/></svg><span id="toast-text"></span></div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <nav class="sim" id="sim" aria-label="Simular el viaje"></nav>
+  </div>
+
+  <script src="icons.js"></script>
+  <script>
+    const icon = (id, s = 14) => `<svg class="i" width="${s}" height="${s}"><use href="#i-${id}"/></svg>`;
+
+    // ---------------------------------------------------------------
+    // Apps disponibles para enlazar. El usuario elige cuáles van en
+    // cada proyecto y a qué apunta cada una (correo, archivo, reunión).
+    // ---------------------------------------------------------------
+    const APPS = {
+      outlook: { name: "Outlook", color: "#0f6cbd", icon: "mail", url: "https://outlook.office.com/mail/" },
+      teams: { name: "Teams", color: "#5b5fc7", icon: "video", url: "https://teams.microsoft.com/" },
+      ppt: { name: "PowerPoint", color: "#c43e1c", icon: "presentation", url: "https://www.office.com/launch/powerpoint" },
+      excel: { name: "Excel", color: "#107c41", icon: "table", url: "https://www.office.com/launch/excel" },
+      word: { name: "Word", color: "#185abd", icon: "file", url: "https://www.office.com/launch/word" },
+      colab: { name: "Colab", color: "#e8710a", text: "co", url: "https://colab.research.google.com/" },
+      drive: { name: "Drive", color: "#1e8e3e", icon: "folder", url: "https://drive.google.com/" },
+      notion: { name: "Notion", color: "#f1f1ef", fg: "#111", text: "N", url: "https://www.notion.so/" },
+      figma: { name: "Figma", color: "#a259ff", text: "F", url: "https://www.figma.com/" },
+      zoom: { name: "Zoom", color: "#2d8cff", icon: "video", url: "https://zoom.us/" },
+      whatsapp: { name: "WhatsApp", color: "#25d366", icon: "message", url: "https://web.whatsapp.com/" },
+      phone: { name: "Llamar", color: "#34c759", icon: "phone", url: "tel:+50600000000" },
+      maps: { name: "Maps", color: "#ea4335", icon: "pin", url: "https://maps.google.com/" },
+      web: { name: "Enlace", color: "#3b4a5c", icon: "link", url: "#" },
+    };
+
+    const PROJECTS = [
+      {
+        id: "pres",
+        rank: 1,
+        color: "#fb7185",
+        title: "Presentación Q4",
+        time: "10:00",
+        sub: "Grupo Ámbar · Sala 2",
+        links: [
+          { app: "ppt", hint: "Propuesta_Q4_v3" },
+          { app: "teams", hint: "Unirse a la reunión" },
+          { app: "outlook", hint: "Correo de Laura" },
+          { app: "notion", hint: "Guion de la presentación" },
+        ],
+      },
+      {
+        id: "rep",
+        rank: 2,
+        color: "#fbbf24",
+        title: "Reporte semanal",
+        time: "12:00",
+        sub: "Métricas de septiembre",
+        links: [
+          { app: "excel", hint: "Métricas septiembre" },
+          { app: "colab", hint: "Notebook de métricas" },
+          { app: "word", hint: "Reporte semana 40" },
+          { app: "outlook", hint: "Correo de Marco" },
+        ],
+      },
+      {
+        id: "mom",
+        rank: 3,
+        color: "#34d399",
+        title: "Mamá",
+        time: "12:30",
+        sub: "Cumpleaños",
+        links: [
+          { app: "whatsapp", hint: "Chat con mamá" },
+          { app: "phone", hint: "Llamar a mamá" },
+        ],
+      },
+    ];
+
+    // ---------------------------------------------------------------
+    // Línea de tiempo del día (6:00–18:00)
+    // ---------------------------------------------------------------
+    const DAY_START = 6 * 60;
+    const DAY_SPAN = 12 * 60;
+
+    const BLOCKS = [
+      { s: "6:30", e: "7:48", t: "7:48", k: "bus", icon: "bus", name: "Bus", label: "Bus · llegas 7:48" },
+      { s: "8:30", e: "9:00", t: "8:30", k: "meet", icon: "users", name: "Stand-up", label: "Stand-up 8:30" },
+      { s: "10:00", e: "10:45", t: "10:00", k: "p1", icon: "presentation", rank: 1, name: "Presentación", label: "Presentación Q4 · 10:00", project: "pres" },
+      { s: "11:30", e: "12:00", t: "12:00", k: "p2", icon: "file", rank: 2, name: "Reporte", label: "Reporte · vence 12:00", project: "rep" },
+      { s: "12:30", e: "13:00", t: "12:30", k: "p3", icon: "phone", rank: 3, name: "Mamá", label: "Llamar a mamá · 12:30", project: "mom" },
+      { s: "14:00", e: "15:00", t: "14:00", k: "meet", icon: "users", name: "Sprint", label: "Sprint review 14:00" },
+      { s: "17:15", e: "18:00", t: "17:15", k: "bus", icon: "bus", name: "Regreso", label: "Bus de regreso 17:15" },
+    ];
+    const RANK_COLOR = { 1: "#fb7185", 2: "#fbbf24", 3: "#34d399" };
+    const ROW = 22;
+    const GAP = 7;
+
+    const pct = (hm) => {
+      const [h, m] = hm.split(":").map(Number);
+      return ((h * 60 + m - DAY_START) / DAY_SPAN) * 100;
+    };
+
+    const $stairs = document.getElementById("stairs");
+    const $tip = document.getElementById("tip");
+    const $screen = document.getElementById("screen");
+
+    function showTip(text, atPct, rowTop) {
+      $tip.textContent = text;
+      $tip.style.top = `${$stairs.offsetTop + rowTop - 30}px`;
+      $tip.style.left = `clamp(60px, ${atPct}%, calc(100% - 60px))`;
+      $tip.classList.add("show");
+      clearTimeout(showTip.t);
+      showTip.t = setTimeout(() => $tip.classList.remove("show"), 1800);
+    }
+
+    function jumpTo(id) {
+      const card = document.getElementById("p-" + id);
+      const r = card.getBoundingClientRect();
+      const s = $screen.getBoundingClientRect();
+      $screen.scrollBy({ top: r.top - s.top - 70, behavior: "smooth" });
+      card.classList.add("flash");
+      setTimeout(() => card.classList.remove("flash"), 1200);
+    }
+
+    const H = BLOCKS.length * ROW + (BLOCKS.length - 1) * GAP;
+    $stairs.style.height = H + "px";
+    document.getElementById("steps").setAttribute("viewBox", `0 0 100 ${H}`);
+
+    const minPct = (26 / $stairs.clientWidth) * 100;
+
+    // El bus termina cuando Waze dice que llegas; lo que empieza antes queda en riesgo.
+    function renderStairs(now, eta) {
+      $stairs.querySelectorAll(".blk, .lbl").forEach((n) => n.remove());
+      const bus = BLOCKS[0];
+      bus.e = bus.t = eta;
+      bus.label = `Bus · llegas ${eta}`;
+
+      const steps = BLOCKS.map((b, i) => {
+        const w = Math.max(pct(b.e) - pct(b.s), minPct);
+        const x = Math.min(pct(b.s), 100 - w);
+        return { b, x, w, top: i * (ROW + GAP), risk: b !== bus && pct(b.s) < pct(eta) };
+      });
+
+      steps.forEach(({ b, x, w, top, risk }) => {
+        const onTap = () => {
+          showTip(b.label, x + w / 2, top);
+          if (b.project) jumpTo(b.project);
+        };
+
+        const el = document.createElement("div");
+        el.className = `blk k-${b.k}` + (risk ? " risk" : "");
+        Object.assign(el.style, { top: top + "px", height: ROW + "px", left: x + "%", width: w + "%" });
+        el.innerHTML = icon(b.icon, 12);
+        el.addEventListener("click", onTap);
+        $stairs.appendChild(el);
+
+        const lbl = document.createElement("div");
+        lbl.className = "lbl" + (risk ? " risk" : "");
+        Object.assign(lbl.style, { top: top + "px", height: ROW + "px", left: `calc(${x + w}% + 6px)` });
+        lbl.innerHTML =
+          (b.rank ? `<span class="rk" style="background:${RANK_COLOR[b.rank]}">${b.rank}</span>` : "") +
+          `${b.name}<span class="t">${b.t}</span>`;
+        lbl.addEventListener("click", onTap);
+        $stairs.appendChild(lbl);
+        if (lbl.offsetLeft + lbl.offsetWidth > $stairs.clientWidth) {
+          lbl.style.left = "auto";
+          lbl.style.right = `calc(${100 - x}% + 6px)`;
+        }
+      });
+
+      let d = "";
+      for (let i = 0; i < steps.length - 1; i++) {
+        const a = steps[i];
+        const n = steps[i + 1];
+        const y = a.top + ROW + GAP / 2;
+        d += `M${a.x + a.w} ${a.top + ROW}V${y}H${n.x}V${n.top}`;
+      }
+      document.getElementById("steps-path").setAttribute("d", d);
+      document.getElementById("now").style.left = pct(now) + "%";
+      document.getElementById("past").style.width = pct(now) + "%";
+    }
+
+    // ---------------------------------------------------------------
+    // Tarjetas de proyecto
+    // ---------------------------------------------------------------
+    const $projects = document.getElementById("projects");
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toast-text");
+
+    function showToast(text) {
+      toastText.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.t);
+      showToast.t = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function appTile(key) {
+      const a = APPS[key];
+      const glyph = a.text ? a.text : icon(a.icon, 20);
+      return `<span class="app" style="background:${a.color};color:${a.fg || "#fff"}">${glyph}</span>`;
+    }
+
+    function linkEl(link, isNew = false) {
+      const a = APPS[link.app];
+      const el = document.createElement("a");
+      el.className = "link" + (isNew ? " new" : "");
+      el.href = link.url || a.url;
+      el.target = "_blank";
+      el.rel = "noopener";
+      el.title = `${a.name} · ${link.hint}`;
+      el.innerHTML = `${appTile(link.app)}<span class="name">${a.name}</span>`;
+      el.addEventListener("click", () => showToast(`${a.name} · ${link.hint}`));
+      return el;
+    }
+
+    function renderProject(p) {
+      const card = document.createElement("article");
+      card.className = "glass proj";
+      card.id = "p-" + p.id;
+      card.innerHTML = `
+        <header class="p-head">
+          <span class="rank" style="background:${p.color}">${p.rank}</span>${p.title}
+          <span class="time">${p.time}</span>
+        </header>
+        <p class="p-sub">${p.sub}</p>
+        <div class="links"></div>`;
+      const box = card.querySelector(".links");
+      p.links.forEach((l) => box.appendChild(linkEl(l)));
+
+      const add = document.createElement("button");
+      add.className = "link add";
+      add.innerHTML = `<span class="app">${icon("plus", 20)}</span><span class="name">Agregar</span>`;
+      add.addEventListener("click", () => openPicker(p));
+      box.appendChild(add);
+
+      $projects.appendChild(card);
+      $projects.appendChild(Object.assign(document.createElement("div"), { style: "height:10px" }));
+    }
+
+    PROJECTS.forEach(renderProject);
+
+    // ---------------------------------------------------------------
+    // Agregar enlaces
+    // ---------------------------------------------------------------
+    const phone = document.getElementById("phone");
+    const picker = document.getElementById("picker");
+    let current = null;
+
+    function openPicker(p) {
+      current = p;
+      document.getElementById("sheet-title").textContent = `Agregar a ${p.title}`;
+      const used = new Set(p.links.map((l) => l.app));
+      picker.innerHTML = "";
+      Object.keys(APPS)
+        .filter((k) => k !== "web" && !used.has(k))
+        .forEach((k) => {
+          const b = document.createElement("button");
+          b.className = "link";
+          b.innerHTML = `${appTile(k)}<span class="name">${APPS[k].name}</span>`;
+          b.addEventListener("click", () => addLink({ app: k, hint: "agregado por ti" }));
+          picker.appendChild(b);
+        });
+      phone.classList.add("sheet-open");
+    }
+
+    function addLink(link) {
+      current.links.push(link);
+      const box = document.querySelector(`#p-${current.id} .links`);
+      box.insertBefore(linkEl(link, true), box.querySelector(".add"));
+      phone.classList.remove("sheet-open");
+      showToast(`${APPS[link.app].name} agregado a ${current.title}`);
+    }
+
+    document.getElementById("backdrop").addEventListener("click", () => phone.classList.remove("sheet-open"));
+    document.getElementById("paste").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = e.target.querySelector("input");
+      const url = input.value.trim() || "#";
+      input.value = "";
+      addLink({ app: "web", hint: url, url });
+    });
+
+    document.querySelectorAll(".quick button:not(.talk)").forEach((b) =>
+      b.addEventListener("click", () => showToast("Guardado")),
+    );
+    document.querySelector(".quick .talk").addEventListener("click", () => showToast("Te escucho…"));
+
+    // ---------------------------------------------------------------
+    // Viaje en vivo: Waze aporta el tráfico; Nort lo traduce a lo que
+    // significa para el día de John. Nunca culpa, valida, da una sola
+    // conclusión y como mucho dos acciones.
+    // ---------------------------------------------------------------
+    const TONE = { calm: "#34d399", watch: "#fbbf24", act: "#fb7185" };
+
+    const PHASES = [
+      {
+        name: "Salida",
+        clock: "6:40",
+        eta: "7:30",
+        delay: 0,
+        prog: 14,
+        tone: "calm",
+        status: "Tráfico fluido",
+        n: {
+          title: "Buen viaje",
+          body: "Llegas 7:30, una hora antes del stand-up. Puedes descansar.",
+          actions: [],
+        },
+      },
+      {
+        name: "Choque",
+        clock: "7:03",
+        eta: "7:48",
+        delay: 18,
+        prog: 38,
+        jam: [44, 18],
+        inc: 54,
+        tone: "watch",
+        status: "Choque en Taras · reportado en Waze",
+        n: {
+          title: "Choque en Taras · +18 min",
+          body: "No depende de ti. Llegas 7:48 y el stand-up sigue a salvo.",
+          actions: [],
+        },
+      },
+      {
+        name: "Detenido",
+        clock: "7:24",
+        eta: "8:35",
+        delay: 65,
+        prog: 46,
+        jam: [46, 34],
+        inc: 58,
+        tone: "act",
+        status: "Ruta detenida · 4 km lentos",
+        n: {
+          title: "Llegarías 8:35",
+          body: "Cinco minutos tarde al stand-up. La presentación de las 10:00 sigue a salvo.",
+          actions: [
+            { label: "Avisar al equipo", primary: true, toast: "Le avisé a tu equipo que llegas 8:35", done: "Tu equipo ya sabe que llegas 8:35" },
+            { label: "Unirme por Teams", toast: "Te aviso a las 8:29 para entrar por Teams", done: "Te aviso a las 8:29" },
+          ],
+        },
+      },
+      {
+        name: "Llegando",
+        clock: "8:30",
+        eta: "8:35",
+        delay: 65,
+        prog: 93,
+        tone: "calm",
+        status: "Bajas en 5 min",
+        n: {
+          title: "Ya casi llegas",
+          body: "Fue un viaje pesado. Lo primero: presentación 10:00, tienes hora y media.",
+          actions: [{ label: "Abrir guion", primary: true, toast: "Notion · Guion de la presentación", done: "Guion abierto" }],
+        },
+      },
+    ];
+
+    const $trip = document.getElementById("trip");
+    const $notif = document.getElementById("notif");
+    const $sim = document.getElementById("sim");
+    const $jam = document.getElementById("t-jam");
+    const $inc = document.getElementById("t-inc");
+    let phase = 0;
+
+    function renderNotif(p, stacked) {
+      const n = p.n;
+      $notif.className = `notif tone-${p.tone}` + (stacked ? " stacked" : "");
+      $notif.innerHTML = `
+        <div class="n-head"><span class="logo">${icon("nort", 11)}</span><b>Nort</b>con datos de Waze<span class="when">ahora</span></div>
+        <p class="n-title"><span class="dot"></span>${n.title}</p>
+        <p class="n-body">${n.body}</p>
+        ${n.actions.length ? `<div class="n-actions">${n.actions.map((a, k) => `<button data-k="${k}" class="${a.primary ? "primary" : ""}">${a.label}</button>`).join("")}</div>` : ""}`;
+      $notif.querySelectorAll(".n-actions button").forEach((b) =>
+        b.addEventListener("click", () => {
+          const a = n.actions[b.dataset.k];
+          showToast(a.toast);
+          b.parentElement.outerHTML = `<p class="n-done">${icon("check", 14)}${a.done}</p>`;
+        }),
+      );
+      void $notif.offsetWidth;
+      $notif.classList.add("in");
+    }
+
+    function setPhase(i) {
+      phase = i;
+      const p = PHASES[i];
+      document.getElementById("clock").textContent = p.clock;
+
+      $trip.className = `glass trip-live tone-${p.tone}`;
+      document.getElementById("t-eta").textContent = p.eta;
+      const $delay = document.getElementById("t-delay");
+      $delay.className = "chip " + (p.delay === 0 ? "calm" : p.delay > 30 ? "act" : "watch");
+      $delay.textContent = p.delay === 0 ? "a tiempo" : `+${p.delay} min`;
+      document.getElementById("t-fill").style.width = p.prog + "%";
+      document.getElementById("t-me").style.left = p.prog + "%";
+      document.getElementById("t-status").textContent = p.status;
+
+      $jam.style.opacity = p.jam ? 1 : 0;
+      if (p.jam) Object.assign($jam.style, { left: p.jam[0] + "%", width: p.jam[1] + "%", background: TONE[p.tone] + "aa" });
+      $inc.style.opacity = p.inc ? 1 : 0;
+      if (p.inc) Object.assign($inc.style, { left: p.inc + "%", color: TONE[p.tone] });
+
+      renderNotif(p, i > 0);
+      renderStairs(p.clock, p.eta);
+      [...$sim.children].forEach((b, k) => b.classList.toggle("on", k === i));
+    }
+
+    PHASES.forEach((p, i) => {
+      const b = document.createElement("button");
+      b.innerHTML = `<span class="mono">${p.clock}</span>${p.name}`;
+      b.addEventListener("click", () => setPhase(i));
+      $sim.appendChild(b);
+    });
+    $trip.addEventListener("click", () => setPhase((phase + 1) % PHASES.length));
+
+    setPhase(1);
+    if (document.documentElement.classList.contains("embedded")) {
+      setInterval(() => setPhase((phase + 1) % PHASES.length), 5000);
+    }
+  </script>
+</body>
+</html>
